@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="uk" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyBox — Все для дому, стилю та техніки | Інтернет-магазин</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Шрифт Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        darkBg: '#090b10',
+                        darkCard: '#111520',
+                        darkSurface: '#161b29',
+                        darkBorder: '#1f2638',
+                        neonCyan: '#00f0ff',
+                        neonMagenta: '#ff007f',
+                        neonPurple: '#8b5cf6'
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 20px rgba(0, 240, 255, 0.35)',
+                        'neon-magenta': '0 0 20px rgba(255, 0, 127, 0.35)',
+                        'neon-mix': '0 0 28px rgba(0, 240, 255, 0.22), 0 0 28px rgba(255, 0, 127, 0.22)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkBg text-slate-100 font-sans antialiased selection:bg-neonMagenta selection:text-white overflow-x-hidden">
+
+    <!-- Фонові неонові плями (атмосферне підсвічування) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-40 -left-40 w-[450px] h-[450px] bg-cyan-500/15 rounded-full blur-[130px]"></div>
+        <div class="absolute top-1/3 -right-40 w-[520px] h-[520px] bg-pink-600/15 rounded-full blur-[150px]"></div>
+        <div class="absolute bottom-0 left-1/4 w-[420px] h-[420px] bg-purple-600/10 rounded-full blur-[130px]"></div>
+    </div>
+
+    <!-- 1. ВЕРХНІЙ ПРОМО-БАР -->
+    <div class="relative z-30 bg-gradient-to-r from-cyan-500/20 via-purple-600/20 to-pink-500/20 border-b border-white/10 text-xs sm:text-sm py-2 px-4 text-center backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2 sm:gap-4 font-medium text-slate-200">
+            <span class="inline-flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-neonCyan animate-ping"></span>
+                🚀 Відправка <strong class="text-neonCyan">день у день</strong> при замовленні до 15:00
+            </span>
+            <span class="hidden sm:inline text-white/30">|</span>
+            <span>Оплата при отриманні (Нова Пошта) • Промокод на -10%: <button onclick="copyPromoCode()" class="font-mono font-bold text-neonMagenta bg-neonMagenta/15 border border-neonMagenta/40 px-2 py-0.5 rounded-md hover:bg-neonMagenta/25 transition-colors cursor-pointer" title="Натисніть, щоб скопіювати">DAILY10</button></span>
+        </div>
+    </div>
+
+    <!-- ХЕДЕР (STICKY HEADER) -->
+    <header class="sticky top-0 z-40 bg-darkBg/90 backdrop-blur-xl border-b border-darkBorder transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20 gap-3">
+                
+                <!-- Логотип DailyBox (Векторна 3D-коробка з галочкою + градієнт) -->
+                <a href="#" onclick="resetAllFilters(); return false;" class="flex items-center gap-3 group shrink-0">
+                    <div class="relative w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-2xl bg-darkCard border border-white/15 shadow-neon-mix group-hover:scale-105 transition-transform">
+                        <svg viewBox="0 0 64 64" class="w-8 h-8 sm:w-9 sm:h-9" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="dailyBoxGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#00f0ff"/>
+                                    <stop offset="50%" stop-color="#8b5cf6"/>
+                                    <stop offset="100%" stop-color="#ff007f"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Контур 3D коробки -->
+                            <path d="M32 7L55 20V44L32 57L9 44V20L32 7Z" stroke="url(#dailyBoxGrad)" stroke-width="4" stroke-linejoin="round"/>
+                            <path d="M9 20L32 33L55 20" stroke="url(#dailyBoxGrad)" stroke-width="3.5" stroke-linejoin="round"/>
+                            <path d="M32 33V57" stroke="url(#dailyBoxGrad)" stroke-width="3.5" stroke-linecap="round"/>
+                            <!-- Клапан коробки -->
+                            <path d="M20.5 13.5L43.5 26.5" stroke="#00f0ff" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+                            <!-- Неонова галочка -->
+                            <path d="M38 35L42.5 39.5L50 30" stroke="#ff6b00" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-2xl sm:text-[26px] font-black tracking-tight leading-none bg-gradient-to-r from-neonCyan via-purple-400 to-neonMagenta bg-clip-text text-transparent">
+                            DailyBox
+                        </span>
+                        <span class="text-[10px] sm:text-xs text-slate-400 mt-1 tracking-wide">
+                            Все для дому, стилю та техніки
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Живий пошук (Desktop) -->
+                <div class="hidden lg:flex flex-1 max-w-md mx-4">
+                    <div class="relative w-full group">
+                        <input 
+                            type="text" 
+                            id="searchInputDesktop"
+                            oninput="handleSearch(this.value)"
+                            placeholder="Пошук гаджетів, одягу, товарів для дому..." 
+                            class="w-full bg-darkCard/95 border border-darkBorder focus:border-neonCyan rounded-2xl py-2.5 pl-11 pr-9 text-sm text-white placeholder-slate-400 outline-none transition-all focus:shadow-neon-cyan"
+                        >
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 group-focus-within:text-neonCyan absolute left-4 top-1/2 -translate-y-1/2 transition-colors"></i>
+                        <button id="clearSearchDesktop" onclick="handleSearch('')" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Кнопки дій у хедері -->
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                    
+                    <!-- Кнопка Адмін-панель (Дроп) -->
+                    <button 
+                        onclick="openAdminModal()" 
+                        class="flex items-center gap-1.5 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/40 text-purple-300 hover:text-white px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
+                        title="Режим власника магазину: додати новий товар"
+                    >
+                        <i data-lucide="plus-circle" class="w-4 h-4 text-purple-400"></i>
+                        <span class="hidden xl:inline">Адмін-панель (Дроп)</span>
+                        <span class="xl:hidden hidden sm:inline">Дроп</span>
+                    </button>
+
+                    <!-- Кнопка Відстежити замовлення -->
+                    <button 
+                        onclick="openTrackModal()" 
+                        class="flex items-center gap-1.5 bg-darkCard hover:bg-white/5 border border-darkBorder hover:border-neonCyan/50 text-slate-200 px-3 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all"
+                        title="Перевірити статус замовлення та ТТН"
+                    >
+                        <i data-lucide="package-search" class="w-4 h-4 text-neonCyan"></i>
+                        <span class="hidden md:inline">Відстежити</span>
+                    </button>
+
+                    <!-- Кнопка Обране -->
+                    <button 
+                        onclick="openWishlistModal()" 
+                        class="relative flex items-center justify-center w-10 h-10 sm:w-auto sm:px-3.5 sm:py-2.5 rounded-xl bg-darkCard hover:bg-white/5 border border-darkBorder hover:border-neonMagenta/50 transition-all group"
+                        aria-label="Обране"
+                        title="Список обраних товарів"
+                    >
+                        <i data-lucide="heart" class="w-4 h-4 sm:w-5 sm:h-5 text-neonMagenta group-hover:scale-110 transition-transform"></i>
+                        <span class="hidden sm:inline text-sm font-semibold ml-1.5">Обране</span>
+                        <span id="wishlistBadge" class="absolute -top-1.5 -right-1.5 sm:static sm:ml-1.5 flex items-center justify-center min-w-[20px] h-[20px] px-1 text-[11px] font-bold rounded-full bg-neonMagenta text-white">
+                            0
+                        </span>
+                    </button>
+
+                    <!-- Кнопка Кошик -->
+                    <button 
+                        onclick="toggleCart(true)" 
+                        class="relative flex items-center gap-2 bg-gradient-to-r from-neonCyan/15 to-neonMagenta/15 hover:from-neonCyan/25 hover:to-neonMagenta/25 border border-neonCyan/40 px-3.5 py-2.5 rounded-xl transition-all group shadow-lg"
+                        aria-label="Відкрити кошик"
+                    >
+                        <i data-lucide="shopping-bag" class="w-5 h-5 text-neonCyan group-hover:text-neonMagenta transition-colors"></i>
+                        <div class="hidden sm:flex flex-col items-start text-left leading-none">
+                            <span class="text-[11px] text-slate-400">Кошик</span>
+                            <span id="headerCartTotal" class="text-xs font-extrabold text-white mt-0.5">0 ₴</span>
+                        </div>
+                        <span id="cartBadge" class="flex items-center justify-center min-w-[22px] h-[22px] px-1.5 text-xs font-black rounded-full bg-gradient-to-r from-neonCyan to-neonMagenta text-darkBg shadow-neon-mix">
+                            0
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Живий пошук (Mobile / Tablet) -->
+            <div class="lg:hidden pb-3">
+                <div class="relative w-full">
+                    <input 
+                        type="text" 
+                        id="searchInputMobile"
+                        oninput="handleSearch(this.value)"
+                        placeholder="Пошук гаджетів, одягу, товарів для дому..." 
+                        class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl py-2.5 pl-10 pr-4 text-sm text-white placeholder-slate-400 outline-none"
+                    >
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                </div>
+            </div>
+
+            <!-- Навігація категорій -->
+            <nav class="flex items-center gap-2 overflow-x-auto pb-3 pt-1 no-scrollbar" id="categoryNav">
+                <button onclick="filterCategory('all')" data-cat="all" class="cat-btn active shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-gradient-to-r from-neonCyan to-neonMagenta text-darkBg shadow-neon-mix">
+                    Усі товари
+                </button>
+                <button onclick="filterCategory('hits')" data-cat="hits" class="cat-btn shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-darkCard text-slate-300 border border-darkBorder hover:border-amber-400/50 hover:text-white">
+                    🔥 Хіти продажів
+                </button>
+                <button onclick="filterCategory('electronics')" data-cat="electronics" class="cat-btn shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-darkCard text-slate-300 border border-darkBorder hover:border-neonCyan/50 hover:text-white">
+                    ⚡ Електроніка
+                </button>
+                <button onclick="filterCategory('clothing')" data-cat="clothing" class="cat-btn shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-darkCard text-slate-300 border border-darkBorder hover:border-neonMagenta/50 hover:text-white">
+                    👕 Одяг та стиль
+                </button>
+                <button onclick="filterCategory('home')" data-cat="home" class="cat-btn shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-darkCard text-slate-300 border border-darkBorder hover:border-purple-500/50 hover:text-white">
+                    🏠 Для дому та побуту
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ОСНОВНИЙ КОНТЕНТ -->
+    <main class="relative z-10">
+
+        <!-- 2. HERO-СЕКЦІЯ ТА ТАЙМЕР АКЦІЇ ДНЯ -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-10">
+            <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-darkCard via-[#13192b] to-darkCard border border-white/10 p-6 sm:p-10 lg:p-14 shadow-2xl">
+                <!-- Неонове сяйво всередині банера -->
+                <div class="absolute -right-24 -top-24 w-96 h-96 bg-neonCyan/20 rounded-full blur-[100px] pointer-events-none"></div>
+                <div class="absolute -left-24 -bottom-24 w-96 h-96 bg-neonMagenta/20 rounded-full blur-[100px] pointer-events-none"></div>
+
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+                    <!-- Ліва колонка: Заголовок і CTA -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-neonCyan/30 text-neonCyan text-xs sm:text-sm font-semibold">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                            Трендові знахідки з TikTok та Instagram
+                        </div>
+
+                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.08]">
+                            Все для дому, <br>
+                            <span class="bg-gradient-to-r from-neonCyan via-purple-400 to-neonMagenta bg-clip-text text-transparent">
+                                стилю та техніки
+                            </span>
+                        </h1>
+
+                        <p class="text-slate-300 text-sm sm:text-lg max-w-xl leading-relaxed">
+                            Обирай перевірені гаджети, актуальний оверсайз одяг та корисні девайси для затишку без переплат. Оглядай посилку на <strong>Новій Пошті</strong> перед оплатою!
+                        </p>
+
+                        <!-- Таймер акції дня -->
+                        <div class="inline-flex flex-wrap items-center gap-3 sm:gap-4 p-3.5 sm:p-4 rounded-2xl bg-darkBg/80 border border-neonMagenta/30 backdrop-blur-md">
+                            <div class="flex items-center gap-2 text-xs sm:text-sm font-bold text-neonMagenta">
+                                <i data-lucide="flame" class="w-5 h-5 animate-pulse"></i>
+                                <span>Знижки дня до -40% згорять через:</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 font-mono text-base sm:text-lg font-black text-white">
+                                <span id="timerHours" class="bg-darkCard border border-white/10 px-2.5 py-1 rounded-lg text-neonCyan">05</span>
+                                <span class="text-slate-500">:</span>
+                                <span id="timerMinutes" class="bg-darkCard border border-white/10 px-2.5 py-1 rounded-lg text-neonCyan">42</span>
+                                <span class="text-slate-500">:</span>
+                                <span id="timerSeconds" class="bg-darkCard border border-white/10 px-2.5 py-1 rounded-lg text-neonMagenta">19</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-4 pt-1">
+                            <a href="#catalog" class="inline-flex items-center gap-2 px-7 py-4 rounded-2xl font-extrabold text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-95 transition-all shadow-neon-mix hover:scale-[1.02]">
+                                <span>Перейти до каталогу</span>
+                                <i data-lucide="arrow-down-right" class="w-5 h-5"></i>
+                            </a>
+                            <button onclick="openTrackModal()" class="inline-flex items-center gap-2 px-5 py-4 rounded-2xl font-semibold text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-sm">
+                                <i data-lucide="truck" class="w-4 h-4 text-neonCyan"></i>
+                                <span>Перевірити статус ТТН</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Права колонка: Інтерактивні міні-картки категорій -->
+                    <div class="lg:col-span-5">
+                        <div class="relative rounded-3xl bg-darkBg/85 border border-white/10 p-5 sm:p-6 backdrop-blur-md shadow-neon-mix space-y-4">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-3.5">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Швидкий вибір ніші</span>
+                                <span class="text-xs font-bold text-neonCyan bg-neonCyan/10 px-2.5 py-1 rounded-lg">12+ товарів в наявності</span>
+                            </div>
+
+                            <button onclick="filterCategory('electronics'); document.getElementById('catalog').scrollIntoView();" class="w-full flex items-center gap-4 p-3.5 rounded-2xl bg-darkCard hover:bg-white/5 border border-darkBorder hover:border-neonCyan/50 transition-all text-left group">
+                                <div class="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-neonCyan shrink-0 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="headphones" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold text-white group-hover:text-neonCyan transition-colors">Електроніка та гаджети</p>
+                                    <p class="text-xs text-slate-400 truncate">Навушники, MagSafe, смарт-годинники</p>
+                                </div>
+                                <span class="text-xs font-extrabold text-neonCyan shrink-0">від 749 ₴ →</span>
+                            </button>
+
+                            <button onclick="filterCategory('clothing'); document.getElementById('catalog').scrollIntoView();" class="w-full flex items-center gap-4 p-3.5 rounded-2xl bg-darkCard hover:bg-white/5 border border-darkBorder hover:border-neonMagenta/50 transition-all text-left group">
+                                <div class="w-12 h-12 rounded-xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center text-neonMagenta shrink-0 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="shirt" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold text-white group-hover:text-neonMagenta transition-colors">Одяг та вуличний стиль</p>
+                                    <p class="text-xs text-slate-400 truncate">Оверсайз худі, кросівки, рюкзаки, куртки</p>
+                                </div>
+                                <span class="text-xs font-extrabold text-neonMagenta shrink-0">від 799 ₴ →</span>
+                            </button>
+
+                            <button onclick="filterCategory('home'); document.getElementById('catalog').scrollIntoView();" class="w-full flex items-center gap-4 p-3.5 rounded-2xl bg-darkCard hover:bg-white/5 border border-darkBorder hover:border-purple-500/50 transition-all text-left group">
+                                <div class="w-12 h-12 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="lamp-desk" class="w-6 h-6"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-bold text-white group-hover:text-purple-400 transition-colors">Для дому та побуту</p>
+                                    <p class="text-xs text-slate-400 truncate">Фітнес-блендери, LED-лампи, зволожувачі</p>
+                                </div>
+                                <span class="text-xs font-extrabold text-purple-400 shrink-0">від 349 ₴ →</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4 КАРТКИ ПЕРЕВАГ (TRUST BADGES) -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="flex items-center gap-4 p-5 rounded-2xl bg-darkCard/90 border border-darkBorder hover:border-neonCyan/40 transition-colors">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-neonCyan shrink-0">
+                        <i data-lucide="wallet" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Без передплат</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Сплачуйте за товар після огляду у відділенні</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 p-5 rounded-2xl bg-darkCard/90 border border-darkBorder hover:border-neonMagenta/40 transition-colors">
+                    <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-neonMagenta shrink-0">
+                        <i data-lucide="zap" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Доставка 1–2 дні</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Швидка відправка Новою Поштою по Україні</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 p-5 rounded-2xl bg-darkCard/90 border border-darkBorder hover:border-purple-500/40 transition-colors">
+                    <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Перевірка перед відправкою</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Тестуємо кожен пристрій та шов перед пакуванням</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 p-5 rounded-2xl bg-darkCard/90 border border-darkBorder hover:border-emerald-500/40 transition-colors">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
+                        <i data-lucide="refresh-ccw" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-sm text-white">Гарантія обміну 14 днів</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Швидкий обмін розміру або повернення коштів</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. КАТАЛОГ ТОВАРІВ ІЗ ФІЛЬТРАЦІЄЮ ТА СОРТУВАННЯМ -->
+        <section id="catalog" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+                <div>
+                    <div class="flex items-center gap-2.5">
+                        <h2 class="text-2xl sm:text-3xl font-black text-white">
+                            Каталог товарів <span class="text-neonCyan">DailyBox</span>
+                        </h2>
+                        <span id="productCountBadge" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300">
+                            12 товарів
+                        </span>
+                    </div>
+                    <p id="catalogSubtitle" class="text-sm text-slate-400 mt-1">Показано всі актуальні пропозиції магазину</p>
+                </div>
+
+                <!-- Сортування -->
+                <div class="flex items-center gap-2.5">
+                    <label for="sortSelect" class="text-xs font-medium text-slate-400 whitespace-nowrap">Сортувати:</label>
+                    <select id="sortSelect" onchange="handleSort(this.value)" class="bg-darkCard border border-darkBorder rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-neonCyan cursor-pointer">
+                        <option value="popular">За популярністю</option>
+                        <option value="price-asc">Від дешевших до дорожчих</option>
+                        <option value="price-desc">Від дорожчих до дешевших</option>
+                        <option value="discount">За розміром знижки (%)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Сітка карток товарів -->
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Товари генеруються динамічно через JS -->
+            </div>
+
+            <!-- Стан "Нічого не знайдено" -->
+            <div id="emptyState" class="hidden text-center py-16 px-4 bg-darkCard/60 rounded-3xl border border-darkBorder">
+                <i data-lucide="search-x" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
+                <h3 class="text-lg font-bold text-white">За вашим запитом нічого не знайдено</h3>
+                <p class="text-sm text-slate-400 mt-1 mb-5">Спробуйте змінити ключове слово або скинути обрані фільтри категорій.</p>
+                <button onclick="resetAllFilters()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-neonCyan to-neonMagenta text-darkBg font-bold text-sm shadow-neon-mix">
+                    Показати всі товари
+                </button>
+            </div>
+        </section>
+
+        <!-- 7. СЕКЦІЯ ВІДГУКІВ КЛІЄНТІВ ТА FAQ -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                
+                <!-- Блок реальних відгуків покупців (7 колонок) -->
+                <div class="lg:col-span-7 space-y-5">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-neonCyan">Довіра покупців</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Відгуки клієнтів DailyBox</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-5 rounded-2xl bg-darkCard border border-darkBorder space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-neonCyan to-purple-500 flex items-center justify-center font-bold text-darkBg text-sm">АК</div>
+                                    <div>
+                                        <p class="text-sm font-bold text-white">Артем Коваленко</p>
+                                        <p class="text-[11px] text-slate-400">м. Київ • Нова Пошта</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-amber-400 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                                Замовляв навушники NeonPods Pro та магнітний павербанк. Відправили в той же день, на пошті все перевірив — звук супер, MagSafe тримає мертво!
+                            </p>
+                            <span class="inline-block text-[11px] text-neonCyan bg-neonCyan/10 px-2.5 py-0.5 rounded-md">Підтверджена покупка</span>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-darkCard border border-darkBorder space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-neonMagenta to-amber-500 flex items-center justify-center font-bold text-white text-sm">МС</div>
+                                    <div>
+                                        <p class="text-sm font-bold text-white">Марина Савчук</p>
+                                        <p class="text-[11px] text-slate-400">м. Львів • Нова Пошта</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs text-amber-400 font-bold">★★★★★</span>
+                            </div>
+                            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                                Худі CyberBlack дуже тепле і якісне, після прання не сіло. Ще взяла нічник «Ефект Полум'я» — ввечері створює неймовірну атмосферу в кімнаті!
+                            </p>
+                            <span class="inline-block text-[11px] text-neonMagenta bg-neonMagenta/10 px-2.5 py-0.5 rounded-md">Підтверджена покупка</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Блок FAQ — Часті питання (5 колонок) -->
+                <div class="lg:col-span-5 space-y-5">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-neonMagenta">Допомога покупцю</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-white mt-1">Часті запитання</h2>
+                    </div>
+
+                    <div class="space-y-3" id="faqAccordion">
+                        <div class="rounded-2xl bg-darkCard border border-darkBorder overflow-hidden">
+                            <button onclick="toggleFaq(0)" class="w-full flex items-center justify-between p-4 text-left font-bold text-sm text-white hover:text-neonCyan transition-colors">
+                                <span>Чи можна оплатити замовлення при отриманні?</span>
+                                <i data-lucide="chevron-down" class="faq-icon w-4 h-4 text-slate-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content hidden px-4 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                                Так! Ми відправляємо всі замовлення накладеним платежем Новою Поштою без жодних передплат. Ви оглядаєте посилку у відділенні і тільки потім оплачуєте.
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl bg-darkCard border border-darkBorder overflow-hidden">
+                            <button onclick="toggleFaq(1)" class="w-full flex items-center justify-between p-4 text-left font-bold text-sm text-white hover:text-neonCyan transition-colors">
+                                <span>Як швидко приїде моє замовлення?</span>
+                                <i data-lucide="chevron-down" class="faq-icon w-4 h-4 text-slate-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content hidden px-4 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                                Якщо ви оформили замовлення до 15:00 — відправляємо в той же день. Доставка Новою Поштою по Україні займає 1–2 дні. Номер ТТН одразу з'являється у розділі «Відстежити».
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl bg-darkCard border border-darkBorder overflow-hidden">
+                            <button onclick="toggleFaq(2)" class="w-full flex items-center justify-between p-4 text-left font-bold text-sm text-white hover:text-neonCyan transition-colors">
+                                <span>Що робити, якщо не підійшов розмір одягу?</span>
+                                <i data-lucide="chevron-down" class="faq-icon w-4 h-4 text-slate-400 transition-transform"></i>
+                            </button>
+                            <div class="faq-content hidden px-4 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-white/5 pt-3">
+                                Протягом 14 днів з моменту отримання ви можете легко обміняти товар на інший розмір або оформити повернення коштів, якщо збережено товарний вигляд та бірки.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ФУТЕР -->
+    <footer class="relative z-10 border-t border-darkBorder bg-darkCard pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-10 border-b border-darkBorder">
+                <div class="space-y-3">
+                    <span class="text-2xl font-black bg-gradient-to-r from-neonCyan via-purple-400 to-neonMagenta bg-clip-text text-transparent">
+                        DailyBox
+                    </span>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Твій щоденний бокс корисних та стильних знахідок. Електроніка, сучасний одяг та розумні товари для дому з доставкою по всій Україні.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-3.5 text-sm uppercase tracking-wider">Категорії</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><button onclick="filterCategory('hits'); document.getElementById('catalog').scrollIntoView();" class="hover:text-neonCyan transition-colors">Хіти продажів</button></li>
+                        <li><button onclick="filterCategory('electronics'); document.getElementById('catalog').scrollIntoView();" class="hover:text-neonCyan transition-colors">Електроніка та гаджети</button></li>
+                        <li><button onclick="filterCategory('clothing'); document.getElementById('catalog').scrollIntoView();" class="hover:text-neonMagenta transition-colors">Одяг та вуличний стиль</button></li>
+                        <li><button onclick="filterCategory('home'); document.getElementById('catalog').scrollIntoView();" class="hover:text-purple-400 transition-colors">Товари для дому та побуту</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-3.5 text-sm uppercase tracking-wider">Клієнтам</h4>
+                    <ul class="space-y-2.5 text-sm text-slate-400">
+                        <li><button onclick="openTrackModal()" class="hover:text-neonCyan transition-colors">Відстежити замовлення (ТТН)</button></li>
+                        <li><button onclick="openWishlistModal()" class="hover:text-neonMagenta transition-colors">Список обраного</button></li>
+                        <li><button onclick="openAdminModal()" class="hover:text-purple-400 transition-colors">Кабінет дропшипера (Додати товар)</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-white mb-3.5 text-sm uppercase tracking-wider">Контакти та графік</h4>
+                    <p class="text-sm text-slate-400">Прийом замовлень: 24/7 онлайн</p>
+                    <p class="text-sm text-slate-400 mt-1">Підтримка: Пн–Нд, 09:00 – 21:00</p>
+                    <p class="text-sm text-white font-semibold mt-2">+38 (093) 555-01-99</p>
+                    <div class="flex items-center gap-2.5 mt-3">
+                        <span class="inline-flex items-center gap-1.5 text-xs bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-slate-300">
+                            <i data-lucide="send" class="w-3.5 h-3.5 text-neonCyan"></i> @dailybox_ua
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 text-xs bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-slate-300">
+                            <i data-lucide="instagram" class="w-3.5 h-3.5 text-neonMagenta"></i> dailybox.ua
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
+                <p>© 2026 DailyBox Ukraine. Всі права захищено.</p>
+                <p>Доставка: Нова Пошта • Оплата при отриманні без ризиків</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===================================================================== -->
+    <!-- МОДАЛЬНІ ВІКНА ТА ВИЇЗНІ ПАНЕЛІ                                       -->
+    <!-- ===================================================================== -->
+
+    <!-- 4. МОДАЛЬНЕ ВІКНО ДЕТАЛЬНОГО ПЕРЕГЛЯДУ ТОВАРУ (QUICK VIEW + VARIANTS) -->
+    <div id="quickViewModal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-sm overflow-y-auto">
+        <div class="relative w-full max-w-3xl bg-darkCard border border-white/15 rounded-3xl overflow-hidden shadow-2xl my-auto">
+            <button onclick="closeQuickView()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-darkBg/90 border border-white/15 flex items-center justify-center text-slate-300 hover:text-white hover:border-neonMagenta transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div id="quickViewContent" class="grid grid-cols-1 md:grid-cols-12">
+                <!-- Контент підставляється через JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. ВИЇЗНИЙ КОШИК ТА ОФОРМЛЕННЯ ЗАМОВЛЕННЯ (SLIDE-OVER CART & CHECKOUT) -->
+    <div id="cartOverlay" onclick="toggleCart(false)" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm transition-opacity"></div>
+    <aside id="cartDrawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-darkCard border-l border-darkBorder shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        
+        <!-- Заголовок кошика -->
+        <div class="flex items-center justify-between p-5 border-b border-darkBorder bg-darkBg/50">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="shopping-bag" class="w-5 h-5 text-neonCyan"></i>
+                <h3 class="text-lg font-extrabold text-white">Ваш кошик</h3>
+            </div>
+            <button onclick="toggleCart(false)" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Прокручувана зона кошика -->
+        <div class="flex-1 overflow-y-auto p-5 space-y-5">
+            
+            <!-- Крок 1: Список товарів + Промокод -->
+            <div id="cartStepItems" class="space-y-4">
+                <div id="cartItemsList" class="space-y-3">
+                    <!-- Товари рендеряться тут -->
+                </div>
+
+                <!-- Поле для промокоду -->
+                <div id="promoBox" class="hidden p-3.5 rounded-2xl bg-darkBg/80 border border-white/10 space-y-2">
+                    <label class="block text-xs font-semibold text-slate-300">Є промокод на знижку? (Спробуйте <span class="text-neonCyan font-mono">DAILY10</span>)</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="promoInput" placeholder="Введіть код..." class="flex-1 bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3 py-2 text-sm text-white uppercase outline-none">
+                        <button type="button" onclick="applyPromoCode()" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-neonCyan hover:text-darkBg text-white font-bold text-xs transition-colors">
+                            Застосувати
+                        </button>
+                    </div>
+                    <p id="promoStatusMsg" class="text-xs hidden"></p>
+                </div>
+            </div>
+
+            <!-- Крок 2: Форма оформлення замовлення (Нова Пошта) -->
+            <form id="cartStepCheckout" onsubmit="submitOrder(event)" class="hidden space-y-4 bg-darkBg/80 p-4 sm:p-5 rounded-2xl border border-white/10">
+                <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                    <h4 class="font-bold text-sm text-neonCyan flex items-center gap-2">
+                        <i data-lucide="truck" class="w-4 h-4"></i> Доставка Новою Поштою
+                    </h4>
+                    <button type="button" onclick="switchCartStep('items')" class="text-xs text-slate-400 hover:text-white underline">
+                        ← До товарів
+                    </button>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">ПІБ отримувача *</label>
+                    <input type="text" id="custName" required placeholder="Шевченко Тарас Григорович" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Номер телефону *</label>
+                    <input type="tel" id="custPhone" required placeholder="+380 (__) ___-__-__" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Місто / Населений пункт *</label>
+                        <input type="text" id="custCity" required placeholder="Київ" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Відділення / Поштомат *</label>
+                        <input type="text" id="custBranch" required placeholder="Відділення №15" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Спосіб оплати *</label>
+                    <select id="custPayment" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                        <option value="Накладений платіж при отриманні">Накладений платіж при отриманні (0 грн передплати)</option>
+                        <option value="Оплата на рахунок ФОП / картку">Оплата на рахунок ФОП / картку</option>
+                    </select>
+                </div>
+
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-sm">
+                    <span class="text-slate-400">До сплати:</span>
+                    <span id="checkoutFinalSum" class="font-black text-lg text-neonCyan">0 ₴</span>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl font-extrabold text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-95 transition-all shadow-neon-mix">
+                    Підтвердити замовлення
+                </button>
+            </form>
+
+            <!-- Крок 3: Чек успішного замовлення -->
+            <div id="cartStepSuccess" class="hidden text-center py-6 px-4 space-y-4 bg-darkBg/90 rounded-2xl border border-neonCyan/40">
+                <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mx-auto">
+                    <i data-lucide="check-circle-2" class="w-9 h-9"></i>
+                </div>
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Успішно оформлено</span>
+                    <h4 class="text-xl font-black text-white mt-1">Дякуємо за замовлення!</h4>
+                </div>
+                
+                <div id="receiptBox" class="text-left p-4 rounded-xl bg-darkCard border border-white/10 space-y-2 text-xs text-slate-300">
+                    <!-- Чек підставляється через JS -->
+                </div>
+
+                <div class="flex flex-col gap-2 pt-2">
+                    <button id="trackNewOrderBtn" class="w-full py-3 rounded-xl font-bold text-darkBg bg-neonCyan hover:opacity-90 transition-opacity text-sm">
+                        Відстежити статус замовлення
+                    </button>
+                    <button onclick="toggleCart(false); switchCartStep('items');" class="w-full py-2.5 rounded-xl font-semibold bg-white/5 hover:bg-white/10 text-slate-300 text-xs">
+                        Повернутися до магазину
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Підвал кошика (Підсумок та кнопка переходу до оформлення) -->
+        <div id="cartFooter" class="p-5 border-t border-darkBorder bg-darkBg/95 space-y-3">
+            <div id="discountRow" class="hidden flex items-center justify-between text-xs text-emerald-400">
+                <span>Знижка за промокодом (10%):</span>
+                <span id="discountAmount">-0 ₴</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-slate-400">Разом до сплати:</span>
+                <span id="cartTotalPrice" class="text-2xl font-black bg-gradient-to-r from-neonCyan to-neonMagenta bg-clip-text text-transparent">
+                    0 ₴
+                </span>
+            </div>
+            <button onclick="switchCartStep('checkout')" class="w-full py-3.5 rounded-xl font-extrabold text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-95 transition-all shadow-neon-mix flex items-center justify-center gap-2">
+                <span>Оформити замовлення</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- МОДАЛЬНЕ ВІКНО: СПИСОК ОБРАНОГО (WISHLIST) -->
+    <div id="wishlistModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="relative w-full max-w-xl bg-darkCard border border-white/15 rounded-3xl overflow-hidden shadow-2xl">
+            <div class="flex items-center justify-between p-5 border-b border-darkBorder">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="heart" class="w-5 h-5 text-neonMagenta"></i>
+                    <h3 class="text-lg font-extrabold text-white">Обрані товари</h3>
+                </div>
+                <button onclick="closeWishlistModal()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="wishlistContent" class="p-5 max-h-[65vh] overflow-y-auto space-y-3">
+                <!-- Список обраного -->
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНЕ ВІКНО: ВІДСТЕЖИТИ ЗАМОВЛЕННЯ / ТТН (TRACK ORDER) -->
+    <div id="trackModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="relative w-full max-w-lg bg-darkCard border border-white/15 rounded-3xl overflow-hidden shadow-2xl p-6 space-y-5">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-neonCyan">
+                        <i data-lucide="package-search" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-white">Відстежити замовлення</h3>
+                        <p class="text-xs text-slate-400">Перевірка статусу посилки та ТТН Нової Пошти</p>
+                    </div>
+                </div>
+                <button onclick="closeTrackModal()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleTrackSearch(event)" class="flex gap-2">
+                <input 
+                    type="text" 
+                    id="trackOrderInput" 
+                    required 
+                    placeholder="Введіть номер (напр. #DB-1024)" 
+                    class="flex-1 bg-darkBg border border-darkBorder focus:border-neonCyan rounded-xl px-4 py-3 text-sm text-white uppercase outline-none"
+                >
+                <button type="submit" class="px-5 py-3 rounded-xl font-bold text-darkBg bg-neonCyan hover:opacity-90 transition-opacity text-sm">
+                    Знайти
+                </button>
+            </form>
+
+            <!-- Швидкі підказки збережених замовлень -->
+            <div id="recentOrdersHints" class="text-xs text-slate-400"></div>
+
+            <!-- Результат пошуку замовлення -->
+            <div id="trackResultBox" class="hidden p-4 rounded-2xl bg-darkBg border border-white/10 space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- 6. МОДАЛЬНЕ ВІКНО: МІНІ-АДМІНКА ДРОПШИПЕРА (ДОДАТИ ТОВАР + РОЗРАХУНОК МАРЖІ) -->
+    <div id="adminModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
+        <div class="relative w-full max-w-xl bg-darkCard border border-purple-500/40 rounded-3xl overflow-hidden shadow-2xl my-auto p-6 space-y-5">
+            <div class="flex items-center justify-between border-b border-darkBorder pb-4">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-400">
+                        <i data-lucide="sliders" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-white">Кабінет дропшипера (Додати товар)</h3>
+                        <p class="text-xs text-slate-400">Товар миттєво з'явиться у вітрині магазину</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminModal()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleAddNewProduct(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Назва товару *</label>
+                        <input type="text" id="adminTitle" required placeholder="Напр. Портативний проектор Mini LED" class="w-full bg-darkBg border border-darkBorder focus:border-purple-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Категорія *</label>
+                        <select id="adminCategory" class="w-full bg-darkBg border border-darkBorder focus:border-purple-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                            <option value="electronics">Електроніка</option>
+                            <option value="clothing">Одяг та стиль</option>
+                            <option value="home">Для дому та побуту</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Блок розрахунку дроп-маржі -->
+                <div class="p-4 rounded-2xl bg-darkBg/90 border border-purple-500/25 space-y-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-400 mb-1">Ціна дропу (закупка), ₴ *</label>
+                            <input type="number" id="adminDropPrice" oninput="calculateAdminMargin()" required min="1" value="650" class="w-full bg-darkCard border border-darkBorder focus:border-purple-400 rounded-xl px-3 py-2 text-sm text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-400 mb-1">Ціна продажу на сайті, ₴ *</label>
+                            <input type="number" id="adminSellPrice" oninput="calculateAdminMargin()" required min="1" value="1150" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3 py-2 text-sm text-white outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-400 mb-1">Стара ціна (до знижки), ₴</label>
+                            <input type="number" id="adminOldPrice" min="1" value="1590" class="w-full bg-darkCard border border-darkBorder rounded-xl px-3 py-2 text-sm text-slate-300 outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-white/5 text-xs">
+                        <span class="text-slate-400">Ваш чистий заробіток (маржа з 1 замовлення):</span>
+                        <span id="adminMarginPreview" class="font-black text-base text-emerald-400">+500 ₴ (43%)</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Посилання на фото (URL) або залиште порожнім для авто-фото</label>
+                    <input type="url" id="adminImage" placeholder="https://images.unsplash.com/..." class="w-full bg-darkBg border border-darkBorder focus:border-purple-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Опис товару для покупців *</label>
+                    <textarea id="adminDesc" required rows="2" placeholder="Коротко опишіть головні переваги товару..." class="w-full bg-darkBg border border-darkBorder focus:border-purple-400 rounded-xl px-3.5 py-2.5 text-sm text-white outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-between gap-3 pt-2">
+                    <button type="button" onclick="resetCustomProducts()" class="text-xs text-slate-400 hover:text-neonMagenta underline">
+                        Скинути додані товари
+                    </button>
+                    <button type="submit" class="px-6 py-3 rounded-xl font-extrabold text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-95 transition-all shadow-neon-mix text-sm">
+                        Опублікувати товар на сайті
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- СПЛИВАЮЧЕ СПОВІЩЕННЯ (TOAST) -->
+    <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300">
+        <div class="flex items-center gap-2.5 px-5 py-3 rounded-2xl bg-darkCard border border-neonCyan/60 shadow-neon-cyan text-sm font-semibold text-white">
+            <i data-lucide="check-circle" class="w-4 h-4 text-neonCyan shrink-0"></i>
+            <span id="toastMessage">Дію виконано!</span>
+        </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- ПОВНОЦІННА JAVASCRIPT ЛОГІКА МАГАЗИНУ DAILYBOX                        -->
+    <!-- ===================================================================== -->
+    <script>
+        // 1. БАЗА ТОВАРІВ ЗА ЗАМОВЧУВАННЯМ (12 РЕАЛІСТИЧНИХ ТОВАРІВ ПО 4 НА КАТЕГОРІЮ)
+        const defaultProducts = [
+            // --- ЕЛЕКТРОНІКА (4 товари) ---
+            {
+                id: 101,
+                title: "Бездротові навушники NeonPods Pro ANC",
+                category: "electronics",
+                categoryLabel: "Електроніка",
+                isHit: true,
+                price: 899,
+                oldPrice: 1350,
+                badge: "ХІТ ПРОДАЖІВ",
+                rating: 4.9,
+                reviewsCount: 148,
+                image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
+                description: "Активне шумозаглушення до 35 дБ, глибокий бас, сенсорне керування та до 30 годин автономної роботи разом із зарядним кейсом.",
+                specs: ["Bluetooth 5.3", "До 30 год роботи", "Вологозахист IPX5", "Мікрофон з ENC"],
+                variantsLabel: "Колір корпусу",
+                variants: ["Чорний матовий", "Білий глянець", "Кібер-сірий"],
+                reviews: [
+                    { author: "Максим Д.", text: "Шумодав реально працює в метро, заряд тримають майже тиждень." },
+                    { author: "Олена В.", text: "Дуже зручно сидять у вухах і швидко підключаються до iPhone." }
+                ]
+            },
+            {
+                id: 102,
+                title: "Магнітний павербанк MagSafe 10000 mAh 22.5W",
+                category: "electronics",
+                categoryLabel: "Електроніка",
+                isHit: true,
+                price: 1099,
+                oldPrice: 1490,
+                badge: "ТОП ВИБІР",
+                rating: 4.9,
+                reviewsCount: 192,
+                image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?auto=format&fit=crop&w=800&q=80",
+                description: "Ультратонкий повербанк із сильними неодимовими магнітами. Заряджає смартфон без дротів (15W) або через кабель PD 22.5W. Має цифровий дисплей.",
+                specs: ["Ємність 10 000 mAh", "MagSafe 15W + PD 22.5W", "LED-дисплей заряду"],
+                variantsLabel: "Колір",
+                variants: ["Графіт", "Сріблястий", "Темно-синій"],
+                reviews: [
+                    { author: "Дмитро К.", text: "Магніт тримає дуже міцно навіть через чохол, не гріється." }
+                ]
+            },
+            {
+                id: 103,
+                title: "Бездротова зарядна станція 3-в-1 DockStation RGB",
+                category: "electronics",
+                categoryLabel: "Електроніка",
+                isHit: false,
+                price: 749,
+                oldPrice: 1090,
+                badge: "НОВИНКА",
+                rating: 4.8,
+                reviewsCount: 64,
+                image: "https://images.unsplash.com/photo-1586816879360-004f5b0c51e5?auto=format&fit=crop&w=800&q=80",
+                description: "Заряджайте одночасно смартфон, смарт-годинник та бездротові навушники. Стильна неонова підсвітка з сенсорним вимкненням на ніч.",
+                specs: ["Потужність 15W Fast Charge", "Зарядка 3 пристроїв одночасно", "Адаптер QC 3.0 у комплекті"],
+                variantsLabel: "Колір",
+                variants: ["Чорний", "Білий"],
+                reviews: [
+                    { author: "Ігор П.", text: "Нарешті позбувся трьох різних кабелів на тумбочці біля ліжка." }
+                ]
+            },
+            {
+                id: 104,
+                title: "Смарт-годинник CyberWatch Ultra AMOLED + 2 ремінці",
+                category: "electronics",
+                categoryLabel: "Електроніка",
+                isHit: true,
+                price: 1299,
+                oldPrice: 1850,
+                badge: "ХІТ ПРОДАЖІВ",
+                rating: 4.8,
+                reviewsCount: 117,
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
+                description: "Яскравий AMOLED дисплей 2.04\" з функцією Always-On, прийом дзвінків по Bluetooth, повідомлення з месенджерів, пульсометр та 100+ тренувань.",
+                specs: ["AMOLED екран 60Hz", "Дзвінки та сповіщення", "Батарея до 7 днів", "2 ремінці в наборі"],
+                variantsLabel: "Колір корпусу",
+                variants: ["Титан", "Чорний"],
+                reviews: [
+                    { author: "Владислав Р.", text: "Екран дуже соковитий, на сонці все чудово видно." }
+                ]
+            },
+
+            // --- ОДЯГ ТА СТИЛЬ (4 товари) ---
+            {
+                id: 201,
+                title: "Худі Oversize CyberBlack (Тринитка на флісі)",
+                category: "clothing",
+                categoryLabel: "Одяг та стиль",
+                isHit: true,
+                price: 1190,
+                oldPrice: 1590,
+                badge: "ХІТ СЕЗОНУ",
+                rating: 4.9,
+                reviewsCount: 204,
+                image: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=800&q=80",
+                description: "Щільна турецька тринитка пеньє (320 г/м²). Не кошлатиться після прання, глибокий подвійний капюшон та ідеальна оверсайз посадка унісекс.",
+                specs: ["80% бавовна, 20% поліестер", "Щільність 320 г/м²", "Унісекс крій"],
+                variantsLabel: "Розмір",
+                variants: ["S", "M", "L", "XL"],
+                reviews: [
+                    { author: "Софія М.", text: "Дуже м'яке всередині, взяла розмір M на зріст 170 — сіло ідеально вільно." }
+                ]
+            },
+            {
+                id: 202,
+                title: "Кросівки Air Street Reflect (Світловідбиваючі)",
+                category: "clothing",
+                categoryLabel: "Одяг та стиль",
+                isHit: false,
+                price: 1450,
+                oldPrice: 1990,
+                badge: "ЗНИЖКА",
+                rating: 4.7,
+                reviewsCount: 83,
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
+                description: "Легка амортизуюча підошва EVA, дихаючий комбінований верх та рефлективні вставки, які ефектно світяться у світлі фар ввечері.",
+                specs: ["Амортизація EVA", "Рефлективні вставки", "Сезон: Весна / Осінь"],
+                variantsLabel: "Розмір взуття",
+                variants: ["39", "40", "41", "42", "43", "44"],
+                reviews: [
+                    { author: "Олександр Б.", text: "Легкі, на нозі майже не відчуваються, розмірна сітка повністю відповідає." }
+                ]
+            },
+            {
+                id: 203,
+                title: "Міський рюкзак Anti-Theft UrbanTech з USB портом",
+                category: "clothing",
+                categoryLabel: "Одяг та стиль",
+                isHit: true,
+                price: 799,
+                oldPrice: 1150,
+                badge: "ПРАКТИЧНИЙ",
+                rating: 4.8,
+                reviewsCount: 135,
+                image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80",
+                description: "Водовідштовхувальна тканина Oxford, захищене відділення для ноутбука до 15.6\", прихована кишеня на спинці та зовнішній USB-вихід для зарядки.",
+                specs: ["Відділення для ноутбука 15.6\"", "Вологозахист тканини", "Зовнішній USB-порт"],
+                variantsLabel: "Колір",
+                variants: ["Чорний", "Темно-сірий"],
+                reviews: [
+                    { author: "Тарас Г.", text: "Потрапив під сильний дощ — ноутбук всередині залишився абсолютно сухим." }
+                ]
+            },
+            {
+                id: 204,
+                title: "Термокуртка демісезонна Stealth Windbreaker",
+                category: "clothing",
+                categoryLabel: "Одяг та стиль",
+                isHit: false,
+                price: 1690,
+                oldPrice: 2290,
+                badge: "НОВИНКА",
+                rating: 4.8,
+                reviewsCount: 51,
+                image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=800&q=80",
+                description: "Вітрозахисна та водовідштовхувальна мембранна тканина з технологічним утеплювачем. Комфортний температурний режим від -5°C до +15°C.",
+                specs: ["Мембрана 5000 мм", "Утеплювач Hollowsoft", "Прогумовані блискавки"],
+                variantsLabel: "Розмір",
+                variants: ["S", "M", "L", "XL"],
+                reviews: [
+                    { author: "Денис Л.", text: "Стильно виглядає, не продувається вітром, дуже зручні кишені." }
+                ]
+            },
+
+            // --- ДЛЯ ДОМУ ТА ПОБУТУ (4 товари) ---
+            {
+                id: 301,
+                title: "Портативний фітнес-блендер USB-C FreshMix (450 мл)",
+                category: "home",
+                categoryLabel: "Для дому та побуту",
+                isHit: true,
+                price: 549,
+                oldPrice: 799,
+                badge: "ТРЕНД TIKTOK",
+                rating: 4.9,
+                reviewsCount: 231,
+                image: "https://images.unsplash.com/photo-1570222094114-d054a817e56b?auto=format&fit=crop&w=800&q=80",
+                description: "Готуйте свіжі смузі, протеїнові коктейлі та фреші за 30 секунд на роботі, у спортзалі чи в авто. 6 лез із нержавіючої сталі та зарядка Type-C.",
+                specs: ["Об'єм чаші 450 мл", "6 сталевих лез", "До 15 порцій на 1 заряді"],
+                variantsLabel: "Колір",
+                variants: ["Чорний", "Бірюзовий", "Рожевий"],
+                reviews: [
+                    { author: "Катерина Н.", text: "Перемелює навіть заморожені ягоди та банан без грудочок! Миється за 10 секунд." }
+                ]
+            },
+            {
+                id: 302,
+                title: "Настільний LED-світильник RGB + Бездротова зарядка",
+                category: "home",
+                categoryLabel: "Для дому та побуту",
+                isHit: false,
+                price: 799,
+                oldPrice: 1150,
+                badge: "ДЛЯ РОБОЧОГО СТОЛУ",
+                rating: 4.9,
+                reviewsCount: 119,
+                image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&w=800&q=80",
+                description: "Розумна настільна лампа з 16 мільйонами кольорів RGB, вбудованою бездротовою зарядкою 15W, Bluetooth-колонкою та функцією м'якого будильника.",
+                specs: ["Бездротова зарядка 15W", "RGB підсвітка (12 режимів)", "Вбудований годинник"],
+                variantsLabel: "Колір",
+                variants: ["Білий", "Чорний"],
+                reviews: [
+                    { author: "Андрій С.", text: "Ввечері замінює нічник, а вранці будить плавним світлом. Дуже крута штука." }
+                ]
+            },
+            {
+                id: 303,
+                title: "Модульний органайзер-трансформер для кухні та ванної",
+                category: "home",
+                categoryLabel: "Для дому та побуту",
+                isHit: false,
+                price: 349,
+                oldPrice: 499,
+                badge: "КОРИСНО ДЛЯ ДОМУ",
+                rating: 4.7,
+                reviewsCount: 94,
+                image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+                description: "Набір із 6 стильних контейнерів із міцного еко-пластику, які легко комбінуються між собою для ідеального порядку в шухлядах чи на столі.",
+                specs: ["6 секцій у комплекті", "Міцний ABS-пластик", "Антиковзкі ніжки"],
+                variantsLabel: "Колір набору",
+                variants: ["Графітовий", "Прозорий білий"],
+                reviews: [
+                    { author: "Наталія Т.", text: "Навела ідеальний порядок у косметиці та спеціях, дуже якісний пластик." }
+                ]
+            },
+            {
+                id: 304,
+                title: "Зволожувач-аромадифузор «Ефект Полум'я» FlameMist",
+                category: "home",
+                categoryLabel: "Для дому та побуту",
+                isHit: true,
+                price: 499,
+                oldPrice: 750,
+                badge: "ХІТ ДЛЯ ЗАТИШКУ",
+                rating: 4.9,
+                reviewsCount: 187,
+                image: "https://images.unsplash.com/photo-1602928321679-560bb453f190?auto=format&fit=crop&w=800&q=80",
+                description: "Ультразвуковий зволожувач повітря з підсвіткою пари, що імітує живий вогонь каміна. Безшумна робота, таймер та автовимкнення без води.",
+                specs: ["2 кольори вогню (теплий/неон)", "Тиха робота < 25 дБ", "Живлення від USB Type-C"],
+                variantsLabel: "Колір корпусу",
+                variants: ["Чорний", "Білий"],
+                reviews: [
+                    { author: "Вікторія П.", text: "Гості завжди питають, де купила! Додаєш пару крапель ефірної олії — і в кімнаті спа-салон." }
+                ]
+            }
+        ];
+
+        // 2. СТАН ДОДАТКУ ТА LOCALSTORAGE
+        let customProducts = JSON.parse(localStorage.getItem('dailybox_custom_products')) || [];
+        let products = [...customProducts, ...defaultProducts];
+        let cart = JSON.parse(localStorage.getItem('dailybox_cart')) || [];
+        let wishlist = JSON.parse(localStorage.getItem('dailybox_wishlist')) || [];
+        let orders = JSON.parse(localStorage.getItem('dailybox_orders')) || [
+            // Демо-замовлення для тестування пошуку ТТН
+            {
+                id: "DB-1024",
+                date: "Сьогодні, 11:20",
+                customer: "Коваленко Артем",
+                city: "Київ",
+                branch: "Відділення №12",
+                payment: "Накладений платіж при отриманні",
+                total: 899,
+                status: "Відправлено Новою Поштою",
+                ttn: "20450987654321",
+                items: [{ title: "Бездротові навушники NeonPods Pro ANC", qty: 1, variant: "Чорний матовий" }]
+            }
+        ];
+
+        let currentCategory = 'all';
+        let currentSearch = '';
+        let currentSort = 'popular';
+        let promoDiscountPercent = 0;
+        let selectedModalVariant = '';
+
+        // 3. ІНІЦІАЛІЗАЦІЯ ПРИ ЗАВАНТАЖЕННІ СТОРІНКИ
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            updateCartUI();
+            updateWishlistBadge();
+            startCountdownTimer();
+            lucide.createIcons();
+        });
+
+        // Збереження даних у localStorage
+        function saveState() {
+            localStorage.setItem('dailybox_cart', JSON.stringify(cart));
+            localStorage.setItem('dailybox_wishlist', JSON.stringify(wishlist));
+            localStorage.setItem('dailybox_orders', JSON.stringify(orders));
+            localStorage.setItem('dailybox_custom_products', JSON.stringify(customProducts));
+        }
+
+        // 4. ТАЙМЕР ЗВОРОТНОГО ВІДЛІКУ АКЦІЇ ДНЯ
+        function startCountdownTimer() {
+            let totalSeconds = 5 * 3600 + 42 * 60 + 19;
+            setInterval(() => {
+                if (totalSeconds <= 0) totalSeconds = 6 * 3600;
+                totalSeconds--;
+                const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+                const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+                const s = String(totalSeconds % 60).padStart(2, '0');
+
+                const elH = document.getElementById('timerHours');
+                const elM = document.getElementById('timerMinutes');
+                const elS = document.getElementById('timerSeconds');
+                if (elH) elH.textContent = h;
+                if (elM) elM.textContent = m;
+                if (elS) elS.textContent = s;
+            }, 1000);
+        }
+
+        // 5. ФІЛЬТРАЦІЯ, ПОШУК ТА СОРТУВАННЯ КАТАЛОГУ
+        function filterCategory(category) {
+            currentCategory = category;
+
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.dataset.cat === category) {
+                    btn.className = "cat-btn active shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all bg-gradient-to-r from-neonCyan to-neonMagenta text-darkBg shadow-neon-mix";
+                } else {
+                    btn.className = "cat-btn shrink-0 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-darkCard text-slate-300 border border-darkBorder hover:border-white/30 hover:text-white";
+                }
+            });
+
+            const subtitles = {
+                all: 'Показано всі актуальні пропозиції магазину',
+                hits: 'Найпопулярніші товари тижня за вибором наших покупців',
+                electronics: 'Категорія: Смарт-електроніка, аудіо та зарядні пристрої',
+                clothing: 'Категорія: Сучасний одяг, взуття та міські аксесуари',
+                home: 'Категорія: Корисні девайси для дому, кухні та затишку'
+            };
+            document.getElementById('catalogSubtitle').textContent = subtitles[category] || subtitles.all;
+
+            renderProducts();
+        }
+
+        function handleSearch(query) {
+            currentSearch = query.trim().toLowerCase();
+            document.getElementById('searchInputDesktop').value = query;
+            document.getElementById('searchInputMobile').value = query;
+
+            const clearBtn = document.getElementById('clearSearchDesktop');
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            renderProducts();
+        }
+
+        function handleSort(sortValue) {
+            currentSort = sortValue;
+            renderProducts();
+        }
+
+        function resetAllFilters() {
+            currentCategory = 'all';
+            currentSearch = '';
+            currentSort = 'popular';
+            document.getElementById('searchInputDesktop').value = '';
+            document.getElementById('searchInputMobile').value = '';
+            document.getElementById('clearSearchDesktop').classList.add('hidden');
+            document.getElementById('sortSelect').value = 'popular';
+            filterCategory('all');
+        }
+
+        function getDiscountPercent(p) {
+            if (!p.oldPrice || p.oldPrice <= p.price) return 0;
+            return Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('productGrid');
+            const emptyState = document.getElementById('emptyState');
+            const countBadge = document.getElementById('productCountBadge');
+
+            let filtered = products.filter(p => {
+                const matchCat = currentCategory === 'all' ||
+                                 (currentCategory === 'hits' && p.isHit) ||
+                                 p.category === currentCategory;
+                const matchSearch = p.title.toLowerCase().includes(currentSearch) ||
+                                    p.description.toLowerCase().includes(currentSearch) ||
+                                    p.categoryLabel.toLowerCase().includes(currentSearch);
+                return matchCat && matchSearch;
+            });
+
+            if (currentSort === 'price-asc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (currentSort === 'price-desc') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (currentSort === 'discount') {
+                filtered.sort((a, b) => getDiscountPercent(b) - getDiscountPercent(a));
+            }
+
+            countBadge.textContent = `${filtered.length} товарів`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            grid.innerHTML = filtered.map(product => {
+                const disc = getDiscountPercent(product);
+                const isFav = wishlist.includes(product.id);
+
+                return `
+                <article class="group relative flex flex-col bg-darkCard border border-darkBorder hover:border-neonCyan/50 rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-neon-mix">
+                    
+                    <!-- Фото товару -->
+                    <div class="relative aspect-[4/3] overflow-hidden bg-slate-900 cursor-pointer" onclick="openQuickView(${product.id})">
+                        <img 
+                            src="${product.image}" 
+                            alt="${product.title}" 
+                            onerror="this.src='https://placehold.co/600x450/111520/00f0ff?text=DailyBox'"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-darkCard via-transparent to-transparent opacity-65"></div>
+
+                        <!-- Бейджі зверху ліворуч -->
+                        <div class="absolute top-3 left-3 flex flex-wrap gap-1.5 pr-10">
+                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-extrabold bg-darkBg/85 backdrop-blur-md text-neonCyan border border-neonCyan/30">
+                                ${product.badge}
+                            </span>
+                            ${disc > 0 ? `
+                                <span class="px-2 py-1 rounded-lg text-[10px] font-extrabold bg-neonMagenta text-white shadow-neon-magenta">
+                                    -${disc}%
+                                </span>
+                            ` : ''}
+                        </div>
+
+                        <!-- Кнопка Додати в обране (Сердечко) -->
+                        <button 
+                            onclick="event.stopPropagation(); toggleWishlist(${product.id})" 
+                            class="absolute top-3 right-3 w-9 h-9 rounded-xl bg-darkBg/85 hover:bg-darkBg border ${isFav ? 'border-neonMagenta text-neonMagenta' : 'border-white/15 text-slate-300 hover:text-neonMagenta'} flex items-center justify-center backdrop-blur-md transition-all"
+                            title="${isFav ? 'Видалити з обраного' : 'Додати в обране'}"
+                        >
+                            <i data-lucide="heart" class="w-4 h-4 ${isFav ? 'fill-neonMagenta' : ''}"></i>
+                        </button>
+
+                        <!-- Кнопка Детальніше -->
+                        <button 
+                            onclick="event.stopPropagation(); openQuickView(${product.id})" 
+                            class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-darkBg/85 hover:bg-neonCyan text-white hover:text-darkBg border border-white/15 text-xs font-bold flex items-center gap-1.5 backdrop-blur-md transition-all opacity-95 sm:opacity-0 sm:group-hover:opacity-100"
+                        >
+                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                            <span>Детальніше</span>
+                        </button>
+                    </div>
+
+                    <!-- Інформація про товар -->
+                    <div class="flex-1 flex flex-col p-5">
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
+                            <span class="text-purple-400 font-semibold">${product.categoryLabel}</span>
+                            <span class="flex items-center gap-1 text-amber-400 font-bold">
+                                ★ ${product.rating} <span class="text-slate-500 font-normal">(${product.reviewsCount})</span>
+                            </span>
+                        </div>
+
+                        <h3 onclick="openQuickView(${product.id})" class="text-base font-bold text-white group-hover:text-neonCyan transition-colors cursor-pointer line-clamp-2 mb-2">
+                            ${product.title}
+                        </h3>
+
+                        <p class="text-xs text-slate-400 line-clamp-2 mb-4 flex-1 leading-relaxed">
+                            ${product.description}
+                        </p>
+
+                        <!-- Ціна та кнопка В кошик -->
+                        <div class="pt-3.5 border-t border-white/5 flex items-center justify-between gap-2">
+                            <div>
+                                ${product.oldPrice ? `<span class="block text-xs text-slate-500 line-through">${product.oldPrice} ₴</span>` : ''}
+                                <span class="text-xl font-black text-white">${product.price} <span class="text-neonCyan text-sm">₴</span></span>
+                            </div>
+
+                            <button 
+                                onclick="addToCart(${product.id})" 
+                                class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-90 active:scale-95 transition-all shadow-lg"
+                            >
+                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                                <span>В кошик</span>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+                `;
+            }).join('');
+
+            lucide.createIcons();
+        }
+
+        // 6. ДЕТАЛЬНЕ МОДАЛЬНЕ ВІКНО ТОВАРУ (QUICK VIEW + ВАРІАНТИ + КУПИТИ В 1 КЛІК)
+        function openQuickView(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            const disc = getDiscountPercent(product);
+            const variants = product.variants && product.variants.length > 0 ? product.variants : ["Стандарт"];
+            selectedModalVariant = variants[0];
+
+            const content = document.getElementById('quickViewContent');
+            content.innerHTML = `
+                <!-- Ліва частина: Фото -->
+                <div class="md:col-span-5 relative bg-slate-900 min-h-[260px] md:min-h-full">
+                    <img 
+                        src="${product.image}" 
+                        alt="${product.title}" 
+                        onerror="this.src='https://placehold.co/600x600/111520/00f0ff?text=DailyBox'"
+                        class="w-full h-full object-cover"
+                    >
+                    <div class="absolute top-4 left-4 flex gap-2">
+                        <span class="px-3 py-1 rounded-lg text-xs font-extrabold bg-darkBg/85 text-neonCyan border border-neonCyan/30">
+                            ${product.badge}
+                        </span>
+                        ${disc > 0 ? `<span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-neonMagenta text-white">-${disc}%</span>` : ''}
+                    </div>
+                </div>
+
+                <!-- Права частина: Деталі, Варіанти, Відгуки -->
+                <div class="md:col-span-7 p-6 sm:p-7 flex flex-col justify-between space-y-5 max-h-[85vh] overflow-y-auto">
+                    <div class="space-y-4">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-purple-400">${product.categoryLabel}</span>
+                            <h3 class="text-xl sm:text-2xl font-black text-white mt-1 leading-snug">${product.title}</h3>
+                            <div class="flex flex-wrap items-center gap-3 text-xs mt-2">
+                                <span class="text-amber-400 font-bold">★★★★★ ${product.rating} (${product.reviewsCount} відгуків)</span>
+                                <span class="text-emerald-400 font-semibold flex items-center gap-1">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-400"></span> В наявності
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="text-sm text-slate-300 leading-relaxed">
+                            ${product.description}
+                        </p>
+
+                        <!-- Характеристики -->
+                        <div class="flex flex-wrap gap-1.5">
+                            ${(product.specs || []).map(s => `
+                                <span class="text-xs px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300">✓ ${s}</span>
+                            `).join('')}
+                        </div>
+
+                        <!-- Вибір варіанту (Колір / Розмір) -->
+                        <div class="pt-1">
+                            <label class="block text-xs font-bold text-slate-300 mb-2">
+                                ${product.variantsLabel || 'Оберіть варіант'}: <span id="selectedVariantText" class="text-neonCyan">${selectedModalVariant}</span>
+                            </label>
+                            <div class="flex flex-wrap gap-2" id="variantButtons">
+                                ${variants.map((v, idx) => `
+                                    <button 
+                                        type="button" 
+                                        onclick="selectVariant('${v}', this)" 
+                                        class="variant-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${idx === 0 ? 'bg-neonCyan/15 border-neonCyan text-neonCyan' : 'bg-darkBg border-darkBorder text-slate-300 hover:border-white/30'}"
+                                    >
+                                        ${v}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Міні-блок відгуків -->
+                        ${product.reviews && product.reviews.length > 0 ? `
+                            <div class="p-3.5 rounded-2xl bg-darkBg/80 border border-white/10 space-y-2">
+                                <p class="text-xs font-bold text-slate-300">Останні відгуки покупців:</p>
+                                ${product.reviews.map(r => `
+                                    <div class="text-xs text-slate-400 border-l-2 border-neonMagenta pl-2.5">
+                                        <strong class="text-white">${r.author}:</strong> «${r.text}»
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- Ціна та кнопки купівлі -->
+                    <div class="pt-4 border-t border-white/10 space-y-3">
+                        <div class="flex items-baseline justify-between">
+                            <div>
+                                ${product.oldPrice ? `<span class="text-xs text-slate-500 line-through mr-2">${product.oldPrice} ₴</span>` : ''}
+                                <span class="text-2xl sm:text-3xl font-black text-white">${product.price} <span class="text-neonCyan text-lg">₴</span></span>
+                            </div>
+                            <span class="text-xs text-slate-400">Оплата при отриманні</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            <button 
+                                onclick="addToCart(${product.id}, selectedModalVariant); closeQuickView();" 
+                                class="py-3.5 px-4 rounded-xl font-extrabold text-sm text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-95 transition-all shadow-neon-mix flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                                <span>Додати в кошик</span>
+                            </button>
+                            <button 
+                                onclick="buyInOneClick(${product.id}, selectedModalVariant)" 
+                                class="py-3.5 px-4 rounded-xl font-bold text-sm text-white bg-white/10 hover:bg-white/15 border border-white/15 transition-all flex items-center justify-center gap-2"
+                            >
+                                <i data-lucide="zap" class="w-4 h-4 text-neonCyan"></i>
+                                <span>Купити в 1 клік</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const modal = document.getElementById('quickViewModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function selectVariant(variantName, btnEl) {
+            selectedModalVariant = variantName;
+            document.getElementById('selectedVariantText').textContent = variantName;
+            document.querySelectorAll('.variant-btn').forEach(b => {
+                b.className = "variant-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition-all bg-darkBg border-darkBorder text-slate-300 hover:border-white/30";
+            });
+            btnEl.className = "variant-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition-all bg-neonCyan/15 border-neonCyan text-neonCyan";
+        }
+
+        function closeQuickView() {
+            const modal = document.getElementById('quickViewModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function buyInOneClick(id, variant) {
+            addToCart(id, variant, false);
+            closeQuickView();
+            toggleCart(true);
+            switchCartStep('checkout');
+        }
+
+        // 7. ЛОГІКА ОБРАНОГО (WISHLIST)
+        function toggleWishlist(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            if (wishlist.includes(id)) {
+                wishlist = wishlist.filter(item => item !== id);
+                showToast(`Видалено з обраного`);
+            } else {
+                wishlist.push(id);
+                showToast(`«${product.title}» додано в обране ❤️`);
+            }
+
+            saveState();
+            updateWishlistBadge();
+            renderProducts();
+        }
+
+        function updateWishlistBadge() {
+            document.getElementById('wishlistBadge').textContent = wishlist.length;
+        }
+
+        function openWishlistModal() {
+            const container = document.getElementById('wishlistContent');
+            const favProducts = products.filter(p => wishlist.includes(p.id));
+
+            if (favProducts.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 space-y-3">
+                        <i data-lucide="heart-off" class="w-12 h-12 text-slate-500 mx-auto"></i>
+                        <p class="font-bold text-white">Список обраного порожній</p>
+                        <p class="text-xs text-slate-400">Натискайте на сердечко на картках товарів, щоб зберегти їх тут.</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = favProducts.map(p => `
+                    <div class="flex items-center gap-3.5 p-3 rounded-2xl bg-darkBg border border-white/10">
+                        <img src="${p.image}" alt="${p.title}" class="w-16 h-16 rounded-xl object-cover shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-bold text-white truncate">${p.title}</h4>
+                            <p class="text-sm font-black text-neonCyan mt-0.5">${p.price} ₴</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="addToCart(${p.id}); closeWishlistModal();" class="px-3 py-2 rounded-xl bg-gradient-to-r from-neonCyan to-neonMagenta text-darkBg font-bold text-xs">
+                                В кошик
+                            </button>
+                            <button onclick="toggleWishlist(${p.id}); openWishlistModal();" class="p-2 rounded-xl bg-white/5 text-slate-400 hover:text-neonMagenta">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            const modal = document.getElementById('wishlistModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeWishlistModal() {
+            const modal = document.getElementById('wishlistModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // 8. ПОВНОЦІННИЙ КОШИК, ПРОМОКОД ТА ОФОРМЛЕННЯ ЗАМОВЛЕННЯ
+        function addToCart(id, variant = null, notify = true) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            const chosenVariant = variant || (product.variants && product.variants[0]) || "Стандарт";
+            const existing = cart.find(item => item.id === id && item.variant === chosenVariant);
+
+            if (existing) {
+                existing.qty += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    title: product.title,
+                    price: product.price,
+                    image: product.image,
+                    variant: chosenVariant,
+                    qty: 1
+                });
+            }
+
+            saveState();
+            updateCartUI();
+            if (notify) {
+                showToast(`«${product.title}» додано в кошик`);
+            }
+        }
+
+        function changeCartQty(index, delta) {
+            if (!cart[index]) return;
+            cart[index].qty += delta;
+            if (cart[index].qty <= 0) {
+                cart.splice(index, 1);
+            }
+            saveState();
+            updateCartUI();
+        }
+
+        function applyPromoCode() {
+            const code = document.getElementById('promoInput').value.trim().toUpperCase();
+            const msgEl = document.getElementById('promoStatusMsg');
+            msgEl.classList.remove('hidden');
+
+            if (code === 'DAILY10') {
+                promoDiscountPercent = 10;
+                msgEl.className = "text-xs text-emerald-400 font-semibold";
+                msgEl.textContent = "✓ Промокод DAILY10 активовано! Ваша знижка -10%.";
+                showToast("Знижку -10% застосовано!");
+            } else {
+                promoDiscountPercent = 0;
+                msgEl.className = "text-xs text-neonMagenta";
+                msgEl.textContent = "✕ Невірний промокод. Спробуйте DAILY10";
+            }
+            updateCartUI();
+        }
+
+        function copyPromoCode() {
+            const tempInput = document.createElement("input");
+            tempInput.value = "DAILY10";
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            showToast("Промокод DAILY10 скопійовано! Вставте його в кошику.");
+        }
+
+        function getCartTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const discount = Math.round(subtotal * (promoDiscountPercent / 100));
+            const finalTotal = subtotal - discount;
+            return { subtotal, discount, finalTotal };
+        }
+
+        function updateCartUI() {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            const { subtotal, discount, finalTotal } = getCartTotals();
+
+            document.getElementById('cartBadge').textContent = totalQty;
+            document.getElementById('headerCartTotal').textContent = `${finalTotal.toLocaleString('uk-UA')} ₴`;
+            document.getElementById('cartTotalPrice').textContent = `${finalTotal.toLocaleString('uk-UA')} ₴`;
+            document.getElementById('checkoutFinalSum').textContent = `${finalTotal.toLocaleString('uk-UA')} ₴`;
+
+            const discountRow = document.getElementById('discountRow');
+            if (discount > 0) {
+                discountRow.classList.remove('hidden');
+                document.getElementById('discountAmount').textContent = `-${discount.toLocaleString('uk-UA')} ₴`;
+            } else {
+                discountRow.classList.add('hidden');
+            }
+
+            const listEl = document.getElementById('cartItemsList');
+            const promoBox = document.getElementById('promoBox');
+            const footer = document.getElementById('cartFooter');
+
+            if (cart.length === 0) {
+                listEl.innerHTML = `
+                    <div class="text-center py-12 space-y-3">
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mx-auto text-slate-500">
+                            <i data-lucide="shopping-bag" class="w-8 h-8"></i>
+                        </div>
+                        <p class="font-bold text-white">Ваш кошик порожній</p>
+                        <p class="text-xs text-slate-400">Додайте трендові товари з каталогу, щоб оформити швидке замовлення.</p>
+                    </div>
+                `;
+                promoBox.classList.add('hidden');
+                footer.classList.add('hidden');
+            } else {
+                promoBox.classList.remove('hidden');
+                if (!document.getElementById('cartStepCheckout').classList.contains('hidden') ||
+                    !document.getElementById('cartStepSuccess').classList.contains('hidden')) {
+                    footer.classList.add('hidden');
+                } else {
+                    footer.classList.remove('hidden');
+                }
+
+                listEl.innerHTML = cart.map((item, idx) => `
+                    <div class="flex items-center gap-3 p-3 rounded-2xl bg-darkBg/90 border border-white/10">
+                        <img src="${item.image}" alt="${item.title}" class="w-16 h-16 rounded-xl object-cover shrink-0">
+                        <div class="flex-1 min-w-0">
+                            <h5 class="text-sm font-bold text-white truncate">${item.title}</h5>
+                            <p class="text-[11px] text-slate-400">Варіант: <span class="text-slate-200">${item.variant}</span></p>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="text-xs font-extrabold text-neonCyan">${(item.price * item.qty).toLocaleString('uk-UA')} ₴</span>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="changeCartQty(${idx}, -1)" class="w-6 h-6 rounded-lg bg-white/5 hover:bg-white/15 flex items-center justify-center text-white text-xs font-bold">-</button>
+                                    <span class="text-xs font-bold w-5 text-center">${item.qty}</span>
+                                    <button onclick="changeCartQty(${idx}, 1)" class="w-6 h-6 rounded-lg bg-white/5 hover:bg-white/15 flex items-center justify-center text-white text-xs font-bold">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="changeCartQty(${idx}, -${item.qty})" class="text-slate-500 hover:text-neonMagenta p-1" title="Видалити">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            lucide.createIcons();
+        }
+
+        function toggleCart(open) {
+            const drawer = document.getElementById('cartDrawer');
+            const overlay = document.getElementById('cartOverlay');
+
+            if (open) {
+                switchCartStep('items');
+                overlay.classList.remove('hidden');
+                setTimeout(() => drawer.classList.remove('translate-x-full'), 10);
+            } else {
+                drawer.classList.add('translate-x-full');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function switchCartStep(step) {
+            const itemsStep = document.getElementById('cartStepItems');
+            const checkoutStep = document.getElementById('cartStepCheckout');
+            const successStep = document.getElementById('cartStepSuccess');
+            const footer = document.getElementById('cartFooter');
+
+            itemsStep.classList.add('hidden');
+            checkoutStep.classList.add('hidden');
+            successStep.classList.add('hidden');
+
+            if (step === 'items') {
+                itemsStep.classList.remove('hidden');
+                if (cart.length > 0) footer.classList.remove('hidden');
+            } else if (step === 'checkout') {
+                checkoutStep.classList.remove('hidden');
+                footer.classList.add('hidden');
+            } else if (step === 'success') {
+                successStep.classList.remove('hidden');
+                footer.classList.add('hidden');
+            }
+        }
+
+        // Оформлення замовлення зі збереженням в історію (для перевірки ТТН)
+        function submitOrder(e) {
+            e.preventDefault();
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const city = document.getElementById('custCity').value.trim();
+            const branch = document.getElementById('custBranch').value.trim();
+            const payment = document.getElementById('custPayment').value;
+            const { finalTotal } = getCartTotals();
+
+            const orderNum = `DB-${Math.floor(1000 + Math.random() * 9000)}`;
+            const generatedTtn = `20450${Math.floor(100000000 + Math.random() * 899999999)}`;
+
+            const newOrder = {
+                id: orderNum,
+                date: "Щойно",
+                customer: name,
+                phone: phone,
+                city: city,
+                branch: branch,
+                payment: payment,
+                total: finalTotal,
+                status: "Прийнято в обробку • Готується до відправки",
+                ttn: generatedTtn,
+                items: [...cart]
+            };
+
+            orders.unshift(newOrder);
+            cart = [];
+            promoDiscountPercent = 0;
+            saveState();
+            updateCartUI();
+
+            document.getElementById('receiptBox').innerHTML = `
+                <div class="flex justify-between border-b border-white/10 pb-2">
+                    <span class="text-slate-400">Номер замовлення:</span>
+                    <strong class="text-neonCyan font-mono">#${newOrder.id}</strong>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Отримувач:</span>
+                    <span class="text-white font-semibold">${newOrder.customer}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Доставка:</span>
+                    <span class="text-white">м. ${newOrder.city}, ${newOrder.branch}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Оплата:</span>
+                    <span class="text-white">${newOrder.payment}</span>
+                </div>
+                <div class="flex justify-between pt-2 border-t border-white/10">
+                    <span class="text-slate-400">Сума замовлення:</span>
+                    <strong class="text-base text-emerald-400">${newOrder.total.toLocaleString('uk-UA')} ₴</strong>
+                </div>
+            `;
+
+            document.getElementById('trackNewOrderBtn').onclick = () => {
+                toggleCart(false);
+                openTrackModal(newOrder.id);
+            };
+
+            document.getElementById('cartStepCheckout').reset();
+            switchCartStep('success');
+        }
+
+        // 9. ВІДСТЕЖЕННЯ ЗАМОВЛЕННЯ (TRACK ORDER MODAL)
+        function openTrackModal(prefillId = '') {
+            const modal = document.getElementById('trackModal');
+            const input = document.getElementById('trackOrderInput');
+            const hints = document.getElementById('recentOrdersHints');
+            const resultBox = document.getElementById('trackResultBox');
+
+            resultBox.classList.add('hidden');
+
+            if (orders.length > 0) {
+                hints.innerHTML = `Ваші останні замовлення: ` + orders.slice(0, 3).map(o =>
+                    `<button type="button" onclick="searchOrderById('${o.id}')" class="font-mono text-neonCyan underline hover:text-white mr-2">#${o.id}</button>`
+                ).join('');
+            }
+
+            if (prefillId) {
+                input.value = `#${prefillId}`;
+                searchOrderById(prefillId);
+            } else {
+                input.value = '';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeTrackModal() {
+            const modal = document.getElementById('trackModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function handleTrackSearch(e) {
+            e.preventDefault();
+            const raw = document.getElementById('trackOrderInput').value.trim().replace('#', '').toUpperCase();
+            searchOrderById(raw);
+        }
+
+        function searchOrderById(orderId) {
+            const cleanId = orderId.replace('#', '').toUpperCase();
+            document.getElementById('trackOrderInput').value = `#${cleanId}`;
+            const found = orders.find(o => o.id.toUpperCase() === cleanId);
+            const resultBox = document.getElementById('trackResultBox');
+            resultBox.classList.remove('hidden');
+
+            if (!found) {
+                resultBox.innerHTML = `
+                    <p class="text-sm text-neonMagenta font-semibold">Замовлення #${cleanId} не знайдено.</p>
+                    <p class="text-xs text-slate-400">Перевірте правильність номера або оформіть нове замовлення в кошику.</p>
+                `;
+                return;
+            }
+
+            resultBox.innerHTML = `
+                <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+                    <span class="font-mono font-black text-neonCyan text-base">#${found.id}</span>
+                    <span class="text-xs px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 font-bold">
+                        ${found.status}
+                    </span>
+                </div>
+                <div class="space-y-1.5 text-xs text-slate-300">
+                    <p><span class="text-slate-400">Отримувач:</span> ${found.customer}</p>
+                    <p><span class="text-slate-400">Адреса:</span> м. ${found.city}, ${found.branch} (Нова Пошта)</p>
+                    <p><span class="text-slate-400">Експрес-накладна (ТТН):</span> <strong class="font-mono text-white">${found.ttn}</strong></p>
+                    <p><span class="text-slate-400">Товари:</span> ${found.items.map(i => `${i.title} (${i.qty} шт.)`).join(', ')}</p>
+                    <p><span class="text-slate-400">До сплати:</span> <strong class="text-white">${found.total} ₴</strong> (${found.payment})</p>
+                </div>
+            `;
+        }
+
+        // 10. МІНІ-АДМІНКА ДРОПШИПЕРА (ДОДАВАННЯ ВЛАСНОГО ТОВАРУ + МАРЖА)
+        function openAdminModal() {
+            calculateAdminMargin();
+            const modal = document.getElementById('adminModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeAdminModal() {
+            const modal = document.getElementById('adminModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function calculateAdminMargin() {
+            const dropPrice = Number(document.getElementById('adminDropPrice').value) || 0;
+            const sellPrice = Number(document.getElementById('adminSellPrice').value) || 0;
+            const profit = sellPrice - dropPrice;
+            const marginPercent = sellPrice > 0 ? Math.round((profit / sellPrice) * 100) : 0;
+
+            const preview = document.getElementById('adminMarginPreview');
+            if (profit >= 0) {
+                preview.className = "font-black text-base text-emerald-400";
+                preview.textContent = `+${profit} ₴ (${marginPercent}% маржі)`;
+            } else {
+                preview.className = "font-black text-base text-neonMagenta";
+                preview.textContent = `${profit} ₴ (збиток)`;
+            }
+        }
+
+        function handleAddNewProduct(e) {
+            e.preventDefault();
+            const title = document.getElementById('adminTitle').value.trim();
+            const category = document.getElementById('adminCategory').value;
+            const sellPrice = Number(document.getElementById('adminSellPrice').value);
+            const oldPrice = Number(document.getElementById('adminOldPrice').value) || null;
+            const customImg = document.getElementById('adminImage').value.trim();
+            const desc = document.getElementById('adminDesc').value.trim();
+
+            const categoryLabels = {
+                electronics: "Електроніка",
+                clothing: "Одяг та стиль",
+                home: "Для дому та побуту"
+            };
+
+            const fallbackImages = {
+                electronics: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=80",
+                clothing: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
+                home: "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?auto=format&fit=crop&w=800&q=80"
+            };
+
+            const newProd = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                categoryLabel: categoryLabels[category],
+                isHit: true,
+                price: sellPrice,
+                oldPrice: oldPrice,
+                badge: "НОВИНКА ДРОПУ",
+                rating: 5.0,
+                reviewsCount: 1,
+                image: customImg || fallbackImages[category],
+                description: desc,
+                specs: ["Перевірено DailyBox", "Відправка в день замовлення", "Оплата при отриманні"],
+                variantsLabel: "Варіант",
+                variants: ["Базовий комплект"],
+                reviews: []
+            };
+
+            customProducts.unshift(newProd);
+            products = [...customProducts, ...defaultProducts];
+            saveState();
+            renderProducts();
+            closeAdminModal();
+            e.target.reset();
+            showToast(`Товар «${title}» додано на вітрину магазину!`);
+            document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetCustomProducts() {
+            customProducts = [];
+            products = [...defaultProducts];
+            saveState();
+            renderProducts();
+            closeAdminModal();
+            showToast("Вітрину повернуто до стандартного каталогу");
+        }
+
+        // 11. АКОРДЕОН ЧАСТИХ ПИТАНЬ (FAQ)
+        function toggleFaq(index) {
+            const contents = document.querySelectorAll('.faq-content');
+            const icons = document.querySelectorAll('.faq-icon');
+
+            contents.forEach((el, i) => {
+                if (i === index) {
+                    el.classList.toggle('hidden');
+                    icons[i].classList.toggle('rotate-180');
+                } else {
+                    el.classList.add('hidden');
+                    icons[i].classList.remove('rotate-180');
+                }
+            });
+        }
+
+        // 12. СПЛИВАЮЧЕ ПОВІДОМЛЕННЯ (TOAST)
+        let toastTimer;
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = text;
+            toast.classList.remove('opacity-0', 'translate-y-4');
+
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+            }, 2800);
+        }
+    </script>
+</body>
+</html>
