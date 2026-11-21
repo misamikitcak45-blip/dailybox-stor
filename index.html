@@ -2026,10 +2026,55 @@
                 successStep.classList.remove('hidden');
                 footer.classList.add('hidden');
             }
+            const TG_BOT_TOKEN = "8910050498:AAGpyNn-w3we0GGDhy8Eh3FO1bTO3gzQqKc";
+        const TG_CHAT_ID = "5568762413";
+
+        function escapeTgHtml(value = "") {
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+
+        async function sendOrderToTelegram(order) {
+            const itemsList = (order.items || [])
+                .map((item, idx) => {
+                    const variantText = item.selectedVariant ? ` (${item.selectedVariant})` : "";
+                    const qty = item.qty || 1;
+                    return `${idx + 1}. ${item.title}${variantText} × ${qty} — ${item.price * qty} грн`;
+                })
+                .join("\n") || "—";
+
+            const message = [
+                "🛒 <b>Нове замовлення — DailyBox</b>",
+                `🆔 <b>Номер:</b> <code>${escapeTgHtml(order.id)}</code>`,
+                `👤 <b>Клієнт:</b> ${escapeTgHtml(order.customer)}`,
+                `📞 <b>Телефон:</b> ${escapeTgHtml(order.phone)}`,
+                `🏙 <b>Місто:</b> ${escapeTgHtml(order.city)}`,
+                `📦 <b>Відділення / доставка:</b> ${escapeTgHtml(order.branch)}`,
+                `💳 <b>Оплата:</b> ${escapeTgHtml(order.payment)}`,
+                `🛍 <b>Товари:</b>\n${escapeTgHtml(itemsList)}`,
+                `💰 <b>Разом до сплати:</b> <b>${escapeTgHtml(String(order.total))} грн</b>`
+            ].join("\n");
+
+            const response = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    chat_id: TG_CHAT_ID,
+                    text: message,
+                    parse_mode: "HTML"
+                })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                throw new Error(`Telegram API ${response.status}: ${errText}`);
+            }
         }
 
         // Оформлення замовлення зі збереженням в історію (для перевірки ТТН)
-        function submitOrder(e) {
+        async function submitOrder(e) {
             e.preventDefault();
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
@@ -2054,6 +2099,12 @@
                 ttn: generatedTtn,
                 items: [...cart]
             };
+
+            try {
+                await sendOrderToTelegram(newOrder);
+            } catch (error) {
+                console.error("Помилка відправки замовлення в Telegram:", error);
+            }
 
             orders.unshift(newOrder);
             cart = [];
