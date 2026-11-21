@@ -2076,6 +2076,7 @@
         // Оформлення замовлення зі збереженням в історію (для перевірки ТТН)
         async function submitOrder(e) {
             e.preventDefault();
+            console.log("SUBMIT_START", { name: document.getElementById('custName')?.value, totals: typeof getCartTotals });
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
             const city = document.getElementById('custCity').value.trim();
