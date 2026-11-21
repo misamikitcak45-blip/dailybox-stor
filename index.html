@@ -2094,7 +2094,10 @@
             toastTimer = setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-4');
             }, 2800);
-        }document.addEventListener('click', function (e) {
+        } 
+        }
+
+document.addEventListener('click', function (e) {
     const qvContainer = document.getElementById('quickViewContent');
     if (!qvContainer || !qvContainer.contains(e.target)) return;
 
@@ -2102,8 +2105,14 @@
     if (!btn) return;
 
     const variantText = btn.textContent.trim();
+    const modalTitle = qvContainer.querySelector('h3')?.textContent.trim();
+
     const currentProduct = (typeof products !== 'undefined' && Array.isArray(products))
-        ? products.find(p => p.variantImages && Object.prototype.hasOwnProperty.call(p.variantImages, variantText))
+        ? products.find(p =>
+            p.title.trim() === modalTitle &&
+            p.variantImages &&
+            Object.prototype.hasOwnProperty.call(p.variantImages, variantText)
+        )
         : null;
 
     if (currentProduct && currentProduct.variantImages[variantText]) {
