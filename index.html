@@ -2100,13 +2100,14 @@
                 ttn: generatedTtn,
                 items: [...cart]
             };
-
+console.log("BEFORE_TG", newOrder);
             try {
                 await sendOrderToTelegram(newOrder);
+                console.log("AFTER_TG_OK");
             } catch (error) {
-                console.error("Помилка відправки замовлення в Telegram:", error);
+                console.error("AFTER_TG_ERR:", error);
             }
-
+        
             orders.unshift(newOrder);
             cart = [];
             promoDiscountPercent = 0;
