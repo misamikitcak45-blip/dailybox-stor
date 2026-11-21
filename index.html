@@ -1971,7 +1971,28 @@
             toastTimer = setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-4');
             }, 2800);
+        }document.addEventListener('click', function (e) {
+    const qvContainer = document.getElementById('quickViewContent');
+    if (!qvContainer || !qvContainer.contains(e.target)) return;
+
+    const btn = e.target.closest('button');
+    if (!btn) return;
+
+    const variantText = btn.textContent.trim();
+    const currentProduct = (typeof products !== 'undefined' && Array.isArray(products))
+        ? products.find(p => p.variantImages && Object.prototype.hasOwnProperty.call(p.variantImages, variantText))
+        : null;
+
+    if (currentProduct && currentProduct.variantImages[variantText]) {
+        if (typeof selectedModalVariant !== 'undefined') {
+            selectedModalVariant = variantText;
         }
+        const imgEl = qvContainer.querySelector('img');
+        if (imgEl) {
+            imgEl.src = currentProduct.variantImages[variantText];
+        }
+    }
+});
     </script>
 </body>
 </html>
