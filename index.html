@@ -1363,28 +1363,42 @@
                 },
                 reviews: []
             },
-            {
-                id: 304,
-                title: "Зволожувач-аромадифузор «Ефект Полум'я» FlameMist",
-                category: "home",
-                categoryLabel: "Для дому та побуту",
-                isHit: true,
-                price: 499,
-                oldPrice: 750,
-                badge: "ХІТ ДЛЯ ЗАТИШКУ",
-                rating: 4.9,
-                reviewsCount: 187,
-                image: "https://images.unsplash.com/photo-1602928321679-560bb453f190?auto=format&fit=crop&w=800&q=80",
-                description: "Ультразвуковий зволожувач повітря з підсвіткою пари, що імітує живий вогонь каміна. Безшумна робота, таймер та автовимкнення без води.",
-                specs: ["2 кольори вогню (теплий/неон)", "Тиха робота < 25 дБ", "Живлення від USB Type-C"],
-                variantsLabel: "Колір корпусу",
-                variants: ["Чорний", "Білий"],
-                reviews: [
-                    { author: "Вікторія П.", text: "Гості завжди питають, де купила! Додаєш пару крапель ефірної олії — і в кімнаті спа-салон." }
-                ]
-            }
-        ];
 
+{
+                id: 216,
+                title: "Настільна двоярусна полиця-органайзер Techno Kitchen Seasoning 52×24×39 см",
+                category: "home",
+                categoryLabel: "Товари для дому",
+                isHit: false,
+                price: 290,
+                oldPrice: 370,
+                badge: "2 ЯРУСИ • В НАЯВНОСТІ",
+                rating: 5.0,
+                reviewsCount: 1,
+                image: "./7875407123_nastolnaya-dvuhyarusnaya-polka-organajzer.webp",
+                description: "Двоярусна настільна полиця-органайзер Techno Kitchen Seasoning розміром 52×24×39 см для зручного зберігання банок зі спеціями, олії, сипучих продуктів та кухонного приладдя на крючках і перекладинах.",
+                specs: [
+                    "Розміри: 52 × 24 × 39 см, 2 яруси",
+                    "Конструкція: металеві поперечини, бічні гачки, перфорований низ",
+                    "Наявність на складі постачальника: є в наявності",
+                    "Артикул: 78629888 (дроп-ціна 223 грн)",
+                    "Постачальник: Aveopt"
+                ],
+                variantsLabel: "Ракурс / приклад",
+                variants: [
+                    "Порожня полиця-органайзер",
+                    "Габарити (52×24×39 см)",
+                    "Приклад наповнення (спеції та олія)",
+                    "Варіант розміщення з вінчиком"
+                ],
+                variantImages: {
+                    "Порожня полиця-органайзер": "./7875407123_nastolnaya-dvuhyarusnaya-polka-organajzer.webp",
+                    "Габарити (52×24×39 см)": "./7875407126_nastolnaya-dvuhyarusnaya-polka-organajzer.webp",
+                    "Приклад наповнення (спеції та олія)": "./7875407129_nastolnaya-dvuhyarusnaya-polka-organajzer.webp",
+                    "Варіант розміщення з вінчиком": "./7875407125_nastolnaya-dvuhyarusnaya-polka-organajzer.webp"
+                },
+                reviews: []
+            },
         // 2. СТАН ДОДАТКУ ТА LOCALSTORAGE
         let customProducts = JSON.parse(localStorage.getItem('dailybox_custom_products')) || [];
         let products = [...customProducts, ...defaultProducts];
