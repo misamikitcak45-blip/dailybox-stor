@@ -65,7 +65,7 @@
             <div class="flex items-center justify-between h-20 gap-3">
                 
                 <!-- Логотип DailyBox (Векторна 3D-коробка з галочкою + градієнт) -->
-                <a href="#" onclick="resetAllFilters(); return false;" class="flex items-center gap-3 group shrink-0">
+                    <a href="#" onclick="resetAllFilters(); navigateToPage('catalog'); return false;" class="flex items-center gap-3 group shrink-0">
                     <div class="relative w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center rounded-2xl bg-darkCard border border-white/15 shadow-neon-mix group-hover:scale-105 transition-transform">
                         <svg viewBox="0 0 64 64" class="w-8 h-8 sm:w-9 sm:h-9" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <defs>
@@ -111,6 +111,21 @@
                         </button>
                     </div>
                 </div>
+                <!-- Десктопне меню сторінок (вставити в <header> між логотипом і кнопками дій) -->
+<nav class="hidden md:flex items-center gap-1.5 bg-white/5 p-1 rounded-2xl border border-white/10">
+    <button type="button" onclick="navigateToPage('catalog')" data-page-btn="catalog"
+        class="page-nav-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-neonCyan text-darkBg">
+        Каталог
+    </button>
+    <button type="button" onclick="navigateToPage('delivery')" data-page-btn="delivery"
+        class="page-nav-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-300 hover:text-white">
+        Доставка і оплата
+    </button>
+    <button type="button" onclick="navigateToPage('contacts')" data-page-btn="contacts"
+        class="page-nav-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all text-slate-300 hover:text-white">
+        Контакти та FAQ
+    </button>
+</nav>
 
                 <!-- Кнопки дій у хедері -->
                 <div class="flex items-center gap-2 sm:gap-2.5">
@@ -202,6 +217,21 @@
                 </button>
             </nav>
         </div>
+        <!-- Мобільна навігація сторінок (вставити перед закриваючим </header>) -->
+<div class="flex md:hidden items-center gap-1.5 px-4 pb-3 overflow-x-auto no-scrollbar">
+    <button type="button" onclick="navigateToPage('catalog')" data-page-btn="catalog"
+        class="page-nav-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all bg-neonCyan text-darkBg">
+        Каталог
+    </button>
+    <button type="button" onclick="navigateToPage('delivery')" data-page-btn="delivery"
+        class="page-nav-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-300 hover:text-white bg-white/5">
+        Доставка і оплата
+    </button>
+    <button type="button" onclick="navigateToPage('contacts')" data-page-btn="contacts"
+        class="page-nav-btn shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all text-slate-300 hover:text-white bg-white/5">
+        Контакти та FAQ
+    </button>
+</div>
     </header>
 
     <!-- ОСНОВНИЙ КОНТЕНТ -->
