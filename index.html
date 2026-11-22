@@ -409,22 +409,67 @@
                 </div>
             </div>
 
-            <!-- Сітка карток товарів -->
-            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Товари генеруються динамічно через JS -->
-            </div>
+<!-- 3 СЕКЦІЇ КАТАЛОГУ ЗА КАТЕГОРІЯМИ -->
+<div id="catalogSections" class="space-y-12">
 
-            <!-- Стан "Нічого не знайдено" -->
-            <div id="emptyState" class="hidden text-center py-16 px-4 bg-darkCard/60 rounded-3xl border border-darkBorder">
-                <i data-lucide="search-x" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
-                <h3 class="text-lg font-bold text-white">За вашим запитом нічого не знайдено</h3>
-                <p class="text-sm text-slate-400 mt-1 mb-5">Спробуйте змінити ключове слово або скинути обрані фільтри категорій.</p>
-                <button onclick="resetAllFilters()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-neonCyan to-neonMagenta text-darkBg font-bold text-sm shadow-neon-mix">
-                    Показати всі товари
-                </button>
+    <!-- 1. ЕЛЕКТРОНІКА ТА ГАДЖЕТИ -->
+    <div id="cat-section-electronics" class="space-y-5">
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-neonCyan">
+                    <i data-lucide="headphones" class="w-5 h-5"></i>
+                </span>
+                <div>
+                    <h3 class="text-xl sm:text-2xl font-black text-white">Електроніка та гаджети</h3>
+                    <p class="text-xs text-slate-400">Навушники, MagSafe, смарт-годинники та аксесуари</p>
+                </div>
             </div>
-        </section>
+            <span id="count-electronics" class="text-xs font-bold px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-neonCyan">
+                0
+            </span>
+        </div>
+        <div id="grid-electronics" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    </div>
 
+    <!-- 2. ОДЯГ ТА ВУЛИЧНИЙ СТИЛЬ -->
+    <div id="cat-section-clothing" class="space-y-5">
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-pink-500/15 border border-pink-500/30 flex items-center justify-center text-neonMagenta">
+                    <i data-lucide="shirt" class="w-5 h-5"></i>
+                </span>
+                <div>
+                    <h3 class="text-xl sm:text-2xl font-black text-white">Одяг та вуличний стиль</h3>
+                    <p class="text-xs text-slate-400">Оверсайз худі, кросівки, рюкзаки та повсякденний стиль</p>
+                </div>
+            </div>
+            <span id="count-clothing" class="text-xs font-bold px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-neonMagenta">
+                0
+            </span>
+        </div>
+        <div id="grid-clothing" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    </div>
+
+    <!-- 3. ДЛЯ ДОМУ ТА ПОБУТУ -->
+    <div id="cat-section-home" class="space-y-5">
+        <div class="flex items-center justify-between gap-3 pb-3 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <span class="w-9 h-9 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                    <i data-lucide="lamp-desk" class="w-5 h-5"></i>
+                </span>
+                <div>
+                    <h3 class="text-xl sm:text-2xl font-black text-white">Для дому та побуту</h3>
+                    <p class="text-xs text-slate-400">Фітнес-блендери, LED-лампи, зволожувачі та затишок</p>
+                </div>
+            </div>
+            <span id="count-home" class="text-xs font-bold px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400">
+                0
+            </span>
+        </div>
+        <div id="grid-home" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    </div>
+
+</div>
         <!-- 7. СЕКЦІЯ ВІДГУКІВ КЛІЄНТІВ ТА FAQ -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -1977,9 +2022,8 @@
             if (!p.oldPrice || p.oldPrice <= p.price) return 0;
             return Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100);
         }
-
-        function renderProducts() {
-            const grid = document.getElementById('productGrid');
+function renderProducts() {
+            const catalogSections = document.getElementById('catalogSections');
             const emptyState = document.getElementById('emptyState');
             const countBadge = document.getElementById('productCountBadge');
 
@@ -1989,7 +2033,7 @@
                                  p.category === currentCategory;
                 const matchSearch = p.title.toLowerCase().includes(currentSearch) ||
                                     p.description.toLowerCase().includes(currentSearch) ||
-                                    p.categoryLabel.toLowerCase().includes(currentSearch);
+                                    (p.categoryLabel || '').toLowerCase().includes(currentSearch);
                 return matchCat && matchSearch;
             });
 
@@ -2001,18 +2045,19 @@
                 filtered.sort((a, b) => getDiscountPercent(b) - getDiscountPercent(a));
             }
 
-            countBadge.textContent = `${filtered.length} товарів`;
+            if (countBadge) countBadge.textContent = `${filtered.length} товарів`;
 
             if (filtered.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                lucide.createIcons();
+                if (catalogSections) catalogSections.classList.add('hidden');
+                if (emptyState) emptyState.classList.remove('hidden');
+                if (typeof lucide !== 'undefined') lucide.createIcons();
                 return;
             }
 
-            emptyState.classList.add('hidden');
+            if (emptyState) emptyState.classList.add('hidden');
+            if (catalogSections) catalogSections.classList.remove('hidden');
 
-            grid.innerHTML = filtered.map(product => {
+            const buildCard = (product) => {
                 const disc = getDiscountPercent(product);
                 const isFav = wishlist.includes(product.id);
 
@@ -2041,63 +2086,76 @@
                             ` : ''}
                         </div>
 
-                        <!-- Кнопка Додати в обране (Сердечко) -->
+                        <!-- Кнопка обраного (сердечко) -->
                         <button 
+                            type="button"
                             onclick="event.stopPropagation(); toggleWishlist(${product.id})" 
-                            class="absolute top-3 right-3 w-9 h-9 rounded-xl bg-darkBg/85 hover:bg-darkBg border ${isFav ? 'border-neonMagenta text-neonMagenta' : 'border-white/15 text-slate-300 hover:text-neonMagenta'} flex items-center justify-center backdrop-blur-md transition-all"
-                            title="${isFav ? 'Видалити з обраного' : 'Додати в обране'}"
+                            class="absolute top-3 right-3 w-9 h-9 rounded-xl bg-darkBg/80 backdrop-blur-md border border-white/10 flex items-center justify-center transition-all hover:scale-110 ${isFav ? 'text-neonMagenta border-neonMagenta/50' : 'text-slate-300 hover:text-white'}"
+                            title="${isFav ? 'Прибрати з обраного' : 'Додати в обране'}"
                         >
                             <i data-lucide="heart" class="w-4 h-4 ${isFav ? 'fill-neonMagenta' : ''}"></i>
                         </button>
-
-                        <!-- Кнопка Детальніше -->
-                        <button 
-                            onclick="event.stopPropagation(); openQuickView(${product.id})" 
-                            class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-darkBg/85 hover:bg-neonCyan text-white hover:text-darkBg border border-white/15 text-xs font-bold flex items-center gap-1.5 backdrop-blur-md transition-all opacity-95 sm:opacity-0 sm:group-hover:opacity-100"
-                        >
-                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                            <span>Детальніше</span>
-                        </button>
                     </div>
 
-                    <!-- Інформація про товар -->
-                    <div class="flex-1 flex flex-col p-5">
-                        <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
-                            <span class="text-purple-400 font-semibold">${product.categoryLabel}</span>
-                            <span class="flex items-center gap-1 text-amber-400 font-bold">
-                                ★ ${product.rating} <span class="text-slate-500 font-normal">(${product.reviewsCount})</span>
-                            </span>
+                    <!-- Тіло картки -->
+                    <div class="flex-1 flex flex-col justify-between p-4 sm:p-5 space-y-4">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between text-[11px] text-slate-400">
+                                <span>${product.categoryLabel || ''}</span>
+                                ${product.oldPrice ? `<span class="line-through text-slate-500">${product.oldPrice} ₴</span>` : ''}
+                            </div>
+                            <h4 onclick="openQuickView(${product.id})" class="font-bold text-white text-sm sm:text-base leading-snug line-clamp-2 cursor-pointer group-hover:text-neonCyan transition-colors">
+                                ${product.title}
+                            </h4>
+                            <p class="text-xs text-slate-400 line-clamp-2">
+                                ${product.description}
+                            </p>
                         </div>
 
-                        <h3 onclick="openQuickView(${product.id})" class="text-base font-bold text-white group-hover:text-neonCyan transition-colors cursor-pointer line-clamp-2 mb-2">
-                            ${product.title}
-                        </h3>
-
-                        <p class="text-xs text-slate-400 line-clamp-2 mb-4 flex-1 leading-relaxed">
-                            ${product.description}
-                        </p>
-
-                        <!-- Ціна та кнопка В кошик -->
-                        <div class="pt-3.5 border-t border-white/5 flex items-center justify-between gap-2">
+                        <div class="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
                             <div>
-                                ${product.oldPrice ? `<span class="block text-xs text-slate-500 line-through">${product.oldPrice} ₴</span>` : ''}
-                                <span class="text-xl font-black text-white">${product.price} <span class="text-neonCyan text-sm">₴</span></span>
+                                <span class="text-lg sm:text-xl font-black text-white">${product.price} ₴</span>
                             </div>
-
                             <button 
+                                type="button"
                                 onclick="addToCart(${product.id})" 
-                                class="flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-90 active:scale-95 transition-all shadow-lg"
+                                class="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-neonCyan to-neonMagenta text-darkBg font-extrabold text-xs hover:opacity-95 transition-all shadow-neon-mix flex items-center gap-1.5 shrink-0"
                             >
-                                <i data-lucide="shopping-cart" class="w-4 h-4"></i>
-                                <span>В кошик</span>
+                                <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+                                <span>У кошик</span>
                             </button>
                         </div>
                     </div>
                 </article>
                 `;
-            }).join('');
+            };
 
-            lucide.createIcons();
+            const sections = [
+                { key: 'electronics', sectionId: 'cat-section-electronics', gridId: 'grid-electronics', countId: 'count-electronics' },
+                { key: 'clothing',    sectionId: 'cat-section-clothing',    gridId: 'grid-clothing',    countId: 'count-clothing' },
+                { key: 'home',        sectionId: 'cat-section-home',        gridId: 'grid-home',        countId: 'count-home' }
+            ];
+
+            sections.forEach(sec => {
+                const items = filtered.filter(p => (p.category || '').toLowerCase() === sec.key);
+                const sectionEl = document.getElementById(sec.sectionId);
+                const gridEl = document.getElementById(sec.gridId);
+                const countEl = document.getElementById(sec.countId);
+
+                if (countEl) countEl.textContent = `${items.length}`;
+
+                if (!sectionEl || !gridEl) return;
+
+                if (items.length === 0) {
+                    sectionEl.classList.add('hidden');
+                    gridEl.innerHTML = '';
+                } else {
+                    sectionEl.classList.remove('hidden');
+                    gridEl.innerHTML = items.map(buildCard).join('');
+                }
+            });
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 // Допоміжна функція: збирає унікальний список пар [назваВаріанта, шляхДоФото]
         function getProductGalleryItems(product) {
