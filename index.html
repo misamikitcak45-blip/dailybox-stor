@@ -2486,76 +2486,296 @@
         }
 
         // Оформлення замовлення зі збереженням в історію (для перевірки ТТН)
-        
-        async function submitOrder(e) {
-            e.preventDefault();
-            const name = document.getElementById('custName').value.trim();
-            const phone = document.getElementById('custPhone').value.trim();
-            const city = document.getElementById('custCity').value.trim();
-            const branch = document.getElementById('custBranch').value.trim();
-            const payment = document.getElementById('custPayment').value;
-            const { finalTotal } = getCartTotals();
+       const CUSTOMER_PROFILE_KEY = "dailybox_customer_profile_v1";
+        let isSubmittingOrder = false;
 
-            const orderNum = `DB-${Math.floor(1000 + Math.random() * 9000)}`;
-            const generatedTtn = `20450${Math.floor(100000000 + Math.random() * 899999999)}`;
+        // Автоформатування українського номера до вигляду +380 (XX) XXX-XX-XX
+        function formatUaPhoneInput(inputEl) {
+            if (!inputEl) return;
+            let digits = inputEl.value.replace(/\D/g, "");
 
-            const newOrder = {
-                id: orderNum,
-                date: "Щойно",
-                customer: name,
-                phone: phone,
-                city: city,
-                branch: branch,
-                payment: payment,
-                total: finalTotal,
-                status: "Прийнято в обробку • Готується до відправки",
-                ttn: generatedTtn,
-                items: [...cart]
-            };
-
-            try {
-                await sendOrderToTelegram(newOrder);
-            } catch (error) {
-                console.error("Помилка відправки замовлення в Telegram:", error);
+            if (!digits) {
+                inputEl.value = "";
+                return;
             }
-            orders.unshift(newOrder);
-            cart = [];
-            promoDiscountPercent = 0;
-            saveState();
-            updateCartUI();
 
-            document.getElementById('receiptBox').innerHTML = `
-                <div class="flex justify-between border-b border-white/10 pb-2">
-                    <span class="text-slate-400">Номер замовлення:</span>
-                    <strong class="text-neonCyan font-mono">#${newOrder.id}</strong>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400">Отримувач:</span>
-                    <span class="text-white font-semibold">${newOrder.customer}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400">Доставка:</span>
-                    <span class="text-white">м. ${newOrder.city}, ${newOrder.branch}</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-slate-400">Оплата:</span>
-                    <span class="text-white">${newOrder.payment}</span>
-                </div>
-                <div class="flex justify-between pt-2 border-t border-white/10">
-                    <span class="text-slate-400">Сума замовлення:</span>
-                    <strong class="text-base text-emerald-400">${newOrder.total.toLocaleString('uk-UA')} ₴</strong>
-                </div>
-            `;
+            if (digits.startsWith("0")) {
+                digits = "38" + digits;
+            } else if (!digits.startsWith("380")) {
+                if (digits.startsWith("80")) {
+                    digits = "3" + digits;
+                } else {
+                    digits = "380" + digits;
+                }
+            }
 
-            document.getElementById('trackNewOrderBtn').onclick = () => {
-                toggleCart(false);
-                openTrackModal(newOrder.id);
-            };
+            digits = digits.slice(0, 12);
+            const national = digits.slice(3);
 
-            document.getElementById('cartStepCheckout').reset();
-            switchCartStep('success');
+            let formatted = "+380";
+            if (national.length > 0) formatted += " (" + national.slice(0, 2);
+            if (national.length >= 2) formatted += ")";
+            if (national.length > 2) formatted += " " + national.slice(2, 5);
+            if (national.length > 5) formatted += "-" + national.slice(5, 7);
+            if (national.length > 7) formatted += "-" + national.slice(7, 9);
+
+            inputEl.value = formatted;
         }
 
+        function applyBranchPrefix(prefix) {
+            const branchInput = document.getElementById("custBranch");
+            if (!branchInput) return;
+            const current = branchInput.value.trim();
+
+            if (!current || current === "Відділення №" || current === "Поштомат №") {
+                branchInput.value = prefix;
+            } else if (!current.toLowerCase().startsWith(prefix.toLowerCase())) {
+                branchInput.value = `${prefix} ${current}`.replace(/\s+/g, " ");
+            }
+            branchInput.focus();
+            clearFieldError("custBranch", "errCustBranch");
+        }
+
+        function showFieldError(inputId, errorId, message) {
+            const inputEl = document.getElementById(inputId);
+            const errorEl = document.getElementById(errorId);
+            if (inputEl) {
+                inputEl.classList.remove("border-darkBorder", "focus:border-neonCyan");
+                inputEl.classList.add("border-neonMagenta");
+            }
+            if (errorEl) {
+                errorEl.textContent = message;
+                errorEl.classList.remove("hidden");
+            }
+        }
+
+        function clearFieldError(inputId, errorId) {
+            const inputEl = document.getElementById(inputId);
+            const errorEl = document.getElementById(errorId);
+            if (inputEl) {
+                inputEl.classList.remove("border-neonMagenta");
+                inputEl.classList.add("border-darkBorder", "focus:border-neonCyan");
+            }
+            if (errorEl) {
+                errorEl.textContent = "";
+                errorEl.classList.add("hidden");
+            }
+        }
+
+        function validateCheckoutFields() {
+            const nameEl = document.getElementById("custName");
+            const phoneEl = document.getElementById("custPhone");
+            const cityEl = document.getElementById("custCity");
+            const branchEl = document.getElementById("custBranch");
+
+            const name = nameEl ? nameEl.value.trim().replace(/\s+/g, " ") : "";
+            const phoneDigits = phoneEl ? phoneEl.value.replace(/\D/g, "") : "";
+            const city = cityEl ? cityEl.value.trim().replace(/\s+/g, " ") : "";
+            const branch = branchEl ? branchEl.value.trim().replace(/\s+/g, " ") : "";
+
+            let isValid = true;
+
+            clearFieldError("custName", "errCustName");
+            clearFieldError("custPhone", "errCustPhone");
+            clearFieldError("custCity", "errCustCity");
+            clearFieldError("custBranch", "errCustBranch");
+
+            if (name.length < 3 || !name.includes(" ")) {
+                showFieldError("custName", "errCustName", "Вкажіть ім'я та прізвище (наприклад, Олександр Коваль)");
+                isValid = false;
+            }
+
+            if (!(phoneDigits.length === 12 && phoneDigits.startsWith("380"))) {
+                showFieldError("custPhone", "errCustPhone", "Введіть повний номер у форматі +380 (XX) XXX-XX-XX");
+                isValid = false;
+            }
+
+            if (city.length < 2) {
+                showFieldError("custCity", "errCustCity", "Вкажіть місто або населений пункт доставки");
+                isValid = false;
+            }
+
+            if (branch.length < 1) {
+                showFieldError("custBranch", "errCustBranch", "Вкажіть номер відділення або поштомату");
+                isValid = false;
+            }
+
+            return {
+                isValid,
+                values: {
+                    name,
+                    phone: phoneEl ? phoneEl.value.trim() : "",
+                    city,
+                    branch,
+                    payment: document.getElementById("custPayment")?.value || "Накладений платіж при отриманні"
+                }
+            };
+        }
+
+        function saveCustomerProfile(profile) {
+            try {
+                localStorage.setItem(CUSTOMER_PROFILE_KEY, JSON.stringify({
+                    name: profile.name,
+                    phone: profile.phone,
+                    city: profile.city,
+                    branch: profile.branch,
+                    payment: profile.payment
+                }));
+                toggleClearSavedProfileBtn(true);
+            } catch (_) {}
+        }
+
+        function restoreCustomerProfile() {
+            try {
+                const raw = localStorage.getItem(CUSTOMER_PROFILE_KEY);
+                if (!raw) return;
+                const saved = JSON.parse(raw);
+                if (!saved || typeof saved !== "object") return;
+
+                const nameEl = document.getElementById("custName");
+                const phoneEl = document.getElementById("custPhone");
+                const cityEl = document.getElementById("custCity");
+                const branchEl = document.getElementById("custBranch");
+                const paymentEl = document.getElementById("custPayment");
+
+                if (nameEl && !nameEl.value && saved.name) nameEl.value = saved.name;
+                if (phoneEl && !phoneEl.value && saved.phone) phoneEl.value = saved.phone;
+                if (cityEl && !cityEl.value && saved.city) cityEl.value = saved.city;
+                if (branchEl && !branchEl.value && saved.branch) branchEl.value = saved.branch;
+                if (paymentEl && saved.payment) paymentEl.value = saved.payment;
+
+                toggleClearSavedProfileBtn(Boolean(saved.name || saved.phone || saved.city || saved.branch));
+            } catch (_) {}
+        }
+
+        function clearSavedCustomerProfile() {
+            try {
+                localStorage.removeItem(CUSTOMER_PROFILE_KEY);
+            } catch (_) {}
+
+            ["custName", "custPhone", "custCity", "custBranch"].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = "";
+            });
+            clearFieldError("custName", "errCustName");
+            clearFieldError("custPhone", "errCustPhone");
+            clearFieldError("custCity", "errCustCity");
+            clearFieldError("custBranch", "errCustBranch");
+            toggleClearSavedProfileBtn(false);
+            if (typeof showToast === "function") showToast("Збережені дані клієнта очищено");
+        }
+
+        function toggleClearSavedProfileBtn(hasData) {
+            const btn = document.getElementById("clearSavedCustomerBtn");
+            if (!btn) return;
+            btn.classList.toggle("hidden", !hasData);
+        }
+
+        ["custName", "custPhone", "custCity", "custBranch"].forEach(id => {
+            const el = document.getElementById(id);
+            const errMap = {
+                custName: "errCustName",
+                custPhone: "errCustPhone",
+                custCity: "errCustCity",
+                custBranch: "errCustBranch"
+            };
+            if (el) {
+                el.addEventListener("input", () => clearFieldError(id, errMap[id]));
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", restoreCustomerProfile);
+
+        async function submitOrder(e) {
+            e.preventDefault();
+            if (isSubmittingOrder) return;
+
+            if (!Array.isArray(cart) || cart.length === 0) {
+                if (typeof showToast === "function") showToast("Додайте товар у кошик перед оформленням");
+                return;
+            }
+
+            const { isValid, values } = validateCheckoutFields();
+            if (!isValid) {
+                if (typeof showToast === "function") showToast("Перевірте коректність заповнених полів");
+                return;
+            }
+
+            const submitBtn = document.getElementById("submitOrderBtn");
+            const submitBtnText = document.getElementById("submitOrderBtnText");
+
+            isSubmittingOrder = true;
+            if (submitBtn) submitBtn.disabled = true;
+            if (submitBtnText) submitBtnText.textContent = "Відправляємо замовлення...";
+
+            try {
+                const { finalTotal } = getCartTotals();
+                const orderNum = `DB-${Math.floor(1000 + Math.random() * 9000)}`;
+                const generatedTtn = `20450${Math.floor(100000000 + Math.random() * 899999999)}`;
+
+                const newOrder = {
+                    id: orderNum,
+                    date: "Щойно",
+                    customer: values.name,
+                    phone: values.phone,
+                    city: values.city,
+                    branch: values.branch,
+                    payment: values.payment,
+                    total: finalTotal,
+                    status: "Прийнято в обробку • Готується до відправки",
+                    ttn: generatedTtn,
+                    items: [...cart]
+                };
+
+                try {
+                    await sendOrderToTelegram(newOrder);
+                } catch (error) {
+                    console.error("Помилка відправки замовлення в Telegram:", error);
+                }
+
+                saveCustomerProfile(values);
+                orders.unshift(newOrder);
+                cart = [];
+                promoDiscountPercent = 0;
+                saveState();
+                updateCartUI();
+
+                document.getElementById("receiptBox").innerHTML = `
+                    <div class="flex justify-between border-b border-white/10 pb-2">
+                        <span class="text-slate-400">Номер замовлення:</span>
+                        <strong class="text-neonCyan font-mono">#${newOrder.id}</strong>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Отримувач:</span>
+                        <span class="text-white font-semibold">${newOrder.customer}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Доставка:</span>
+                        <span class="text-white">м. ${newOrder.city}, ${newOrder.branch}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-400">Оплата:</span>
+                        <span class="text-white">${newOrder.payment}</span>
+                    </div>
+                    <div class="flex justify-between pt-2 border-t border-white/10">
+                        <span class="text-slate-400">Сума замовлення:</span>
+                        <strong class="text-base text-emerald-400">${newOrder.total.toLocaleString("uk-UA")} ₴</strong>
+                    </div>
+                `;
+
+                document.getElementById("trackNewOrderBtn").onclick = () => {
+                    toggleCart(false);
+                    openTrackModal(newOrder.id);
+                };
+
+                switchCartStep("success");
+                setTimeout(restoreCustomerProfile, 50);
+            } finally {
+                isSubmittingOrder = false;
+                if (submitBtn) submitBtn.disabled = false;
+                if (submitBtnText) submitBtnText.textContent = "Підтвердити замовлення";
+            }
+        }
         // 9. ВІДСТЕЖЕННЯ ЗАМОВЛЕННЯ (TRACK ORDER MODAL)
         function openTrackModal(prefillId = '') {
             const modal = document.getElementById('trackModal');
