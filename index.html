@@ -2757,8 +2757,7 @@ document.getElementById("receiptBox").innerHTML = `
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-400">Оплата:</span>
-                        <span class="text-white">${newOrder.payment}</span>
-                    </div>
+                        <span class="text-white">${newOrder.payment}</span></div>
                     <div class="flex justify-between pt-2 border-t border-white/10">
                         <span class="text-slate-400">Сума замовлення:</span>
                         <strong class="text-base text-emerald-400">${newOrder.total.toLocaleString("uk-UA")} ₴</strong>
@@ -2768,6 +2767,7 @@ document.getElementById("receiptBox").innerHTML = `
                 document.getElementById("trackNewOrderBtn").onclick = () => {
                     toggleCart(false);
                     openTrackModal(newOrder.id);
+ 
                 };
 
                 if (typeof showToast === "function") {
@@ -2783,84 +2783,176 @@ document.getElementById("receiptBox").innerHTML = `
             }
         }
              
-        // 9. ВІДСТЕЖЕННЯ ЗАМОВЛЕННЯ (TRACK ORDER MODAL)
+// 9. ВІДСТЕЖЕННЯ ЗАМОВЛЕННЯ (TRACK ORDER MODAL)
         function openTrackModal(prefillId = '') {
             const modal = document.getElementById('trackModal');
             const input = document.getElementById('trackOrderInput');
             const hints = document.getElementById('recentOrdersHints');
             const resultBox = document.getElementById('trackResultBox');
 
-            resultBox.classList.add('hidden');
+            if (resultBox) resultBox.classList.add('hidden');
 
-            if (orders.length > 0) {
-                hints.innerHTML = `Ваші останні замовлення: ` + orders.slice(0, 3).map(o =>
-                    `<button type="button" onclick="searchOrderById('${o.id}')" class="font-mono text-neonCyan underline hover:text-white mr-2">#${o.id}</button>`
-                ).join('');
+            if (hints) {
+                if (Array.isArray(orders) && orders.length > 0) {
+                    hints.innerHTML = `Ваші останні замовлення: ` + orders.slice(0, 3).map(o =>
+                        `<button type="button" onclick="searchOrderById('${o.id}')" class="font-mono text-neonCyan underline hover:text-white mr-2">#${o.id}</button>`
+                    ).join('');
+                } else {
+                    hints.innerHTML = `<span class="text-slate-400">Введіть номер замовлення (напр. DB-1234) або номер ТТН.</span>`;
+                }
             }
 
             if (prefillId) {
-                input.value = `#${prefillId}`;
-                searchOrderById(prefillId);
-            } else {
-                input.value = '';
+                const cleanPrefill = String(prefillId).replace(/^#/, '').trim();
+                if (input) input.value = cleanPrefill.toUpperCase().startsWith('DB-') ? `#${cleanPrefill.toUpperCase()}` : cleanPrefill;
+                searchOrderById(cleanPrefill);
+            } else if (input) {
+                input.value = Array.isArray(orders) && orders.length > 0 ? `#${orders[0].id}` : '';
             }
 
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            lucide.createIcons();
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         function closeTrackModal() {
             const modal = document.getElementById('trackModal');
+            if (!modal) return;
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
 
         function handleTrackSearch(e) {
             e.preventDefault();
-            const raw = document.getElementById('trackOrderInput').value.trim().replace('#', '').toUpperCase();
+            const input = document.getElementById('trackOrderInput');
+            const raw = input ? input.value.trim() : '';
             searchOrderById(raw);
         }
 
-        function searchOrderById(orderId) {
-            const cleanId = orderId.replace('#', '').toUpperCase();
-            document.getElementById('trackOrderInput').value = `#${cleanId}`;
-            const found = orders.find(o => o.id.toUpperCase() === cleanId);
-            const resultBox = document.getElementById('trackResultBox');
-            resultBox.classList.remove('hidden');
+        function copyTrackingNumber(ttn) {
+            if (!ttn) return;
+            const text = String(ttn).trim();
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    if (typeof showToast === 'function') showToast(`ТТН ${text} скопійовано`);
+                }).catch(() => {
+                    fallbackCopyText(text);
+                });
+            } else {
+                fallbackCopyText(text);
+            }
+        }
 
-            if (!found) {
+        function fallbackCopyText(text) {
+            const temp = document.createElement('textarea');
+            temp.value = text;
+            temp.setAttribute('readonly', '');
+            temp.style.position = 'absolute';
+            temp.style.left = '-9999px';
+            document.body.appendChild(temp);
+            temp.select();
+            try {
+                document.execCommand('copy');
+                if (typeof showToast === 'function') showToast(`ТТН ${text} скопійовано`);
+            } catch (_) {}
+            document.body.removeChild(temp);
+        }
+
+        function searchOrderById(query) {
+            const rawQuery = String(query || '').trim();
+            const cleanId = rawQuery.replace(/^#/, '').toUpperCase();
+            const cleanTtn = rawQuery.replace(/\D/g, '');
+            const input = document.getElementById('trackOrderInput');
+            const resultBox = document.getElementById('trackResultBox');
+
+            if (!resultBox) return;
+
+            if (!cleanId) {
+                resultBox.classList.remove('hidden');
                 resultBox.innerHTML = `
-                    <p class="text-sm text-neonMagenta font-semibold">Замовлення #${cleanId} не знайдено.</p>
-                    <p class="text-xs text-slate-400">Перевірте правильність номера або оформіть нове замовлення в кошику.</p>
+                    <p class="text-sm text-amber-400 font-semibold">Введіть номер замовлення або ТТН для пошуку.</p>
+                    <p class="text-xs text-slate-400">Наприклад: <span class="font-mono text-slate-200">#DB-1024</span> або 14-значний номер накладної.</p>
                 `;
                 return;
             }
 
+            if (input) {
+                input.value = cleanId.startsWith('DB-') ? `#${cleanId}` : rawQuery;
+            }
+
+            const found = (Array.isArray(orders) ? orders : []).find(o => {
+                const idMatch = String(o.id || '').toUpperCase() === cleanId;
+                const ttnDigits = String(o.ttn || '').replace(/\D/g, '');
+                const ttnMatch = cleanTtn.length >= 6 && ttnDigits === cleanTtn;
+                return idMatch || ttnMatch;
+            });
+
+            resultBox.classList.remove('hidden');
+
+            if (!found) {
+                resultBox.innerHTML = `
+                    <p class="text-sm text-neonMagenta font-semibold">Замовлення «${cleanId}» не знайдено.</p>
+                    <p class="text-xs text-slate-400">Перевірте правильність номера замовлення чи ТТН або оформіть нове замовлення в кошику.</p>
+                `;
+                return;
+            }
+
+            const itemsText = Array.isArray(found.items)
+                ? found.items.map(i => {
+                    const variantLabel = i.variant || i.selectedVariant;
+                    return `${i.title}${variantLabel ? ` [${variantLabel}]` : ''} (${i.qty || 1} шт.)`;
+                }).join(', ')
+                : '';
+
+            const safeTtn = String(found.ttn || '').trim();
+
             resultBox.innerHTML = `
-                <div class="flex items-center justify-between border-b border-white/10 pb-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2.5">
                     <span class="font-mono font-black text-neonCyan text-base">#${found.id}</span>
                     <span class="text-xs px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 font-bold">
                         ${found.status}
                     </span>
                 </div>
-                <div class="space-y-1.5 text-xs text-slate-300">
-                    <p><span class="text-slate-400">Отримувач:</span> ${found.customer}</p>
+                <div class="space-y-1.5 text-xs text-slate-300 mt-2.5">
+                    <p><span class="text-slate-400">Отримувач:</span> ${found.customer}${found.phone ? ` (${found.phone})` : ''}</p>
                     <p><span class="text-slate-400">Адреса:</span> м. ${found.city}, ${found.branch} (Нова Пошта)</p>
-                    <p><span class="text-slate-400">Експрес-накладна (ТТН):</span> <strong class="font-mono text-white">${found.ttn}</strong></p>
-                    <p><span class="text-slate-400">Товари:</span> ${found.items.map(i => `${i.title} (${i.qty} шт.)`).join(', ')}</p>
-                    <p><span class="text-slate-400">До сплати:</span> <strong class="text-white">${found.total} ₴</strong> (${found.payment})</p>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <div>
+                            <span class="text-slate-400">Експрес-накладна (ТТН):</span>
+                            <strong class="font-mono text-white ml-1">${safeTtn}</strong>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onclick="copyTrackingNumber('${safeTtn}')"
+                                class="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-white text-[11px] font-bold border border-white/10 transition-colors"
+                            >
+                                Копіювати ТТН
+                            </button>
+                            <a
+                                href="https://novaposhta.ua/tracking/?cargo_number=${encodeURIComponent(safeTtn)}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="px-2.5 py-1 rounded-lg bg-neonCyan/15 hover:bg-neonCyan/25 text-neonCyan text-[11px] font-bold border border-neonCyan/30 transition-colors"
+                            >
+                                На сайті НП ↗
+                            </a>
+                        </div>
+                    </div>
+                    <p><span class="text-slate-400">Товари:</span> ${itemsText}</p>
+                    <p><span class="text-slate-400">До сплати:</span> <strong class="text-white">${Number(found.total || 0).toLocaleString('uk-UA')} ₴</strong> (${found.payment})</p>
                 </div>
             `;
         }
-
         // 10. МІНІ-АДМІНКА ДРОПШИПЕРА (ДОДАВАННЯ ВЛАСНОГО ТОВАРУ + МАРЖА)
-        function openAdminModal() {
-            calculateAdminMargin();
             const modal = document.getElementById('adminModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
             lucide.createIcons();
+        function openAdminModal() {
+            calculateAdminMargin();
         }
 
         function closeAdminModal() {
