@@ -2739,9 +2739,11 @@
                 promoDiscountPercent = 0;
                 saveState();
                 updateCartUI();
-
-                document.getElementById("receiptBox").innerHTML = `
-                    <div class="flex justify-between border-b border-white/10 pb-2">
+document.getElementById("receiptBox").innerHTML = `
+                    <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs sm:text-sm font-semibold leading-relaxed text-left">
+                        Замовлення прийняте, менеджер зв'яжеться з вами для підтвердження замовлення.
+                    </div>
+                    <div class="flex justify-between border-b border-white/10 pb-2 pt-1">
                         <span class="text-slate-400">Номер замовлення:</span>
                         <strong class="text-neonCyan font-mono">#${newOrder.id}</strong>
                     </div>
@@ -2768,6 +2770,10 @@
                     openTrackModal(newOrder.id);
                 };
 
+                if (typeof showToast === "function") {
+                    showToast("Замовлення прийняте, менеджер зв'яжеться з вами для підтвердження замовлення");
+                }
+
                 switchCartStep("success");
                 setTimeout(restoreCustomerProfile, 50);
             } finally {
@@ -2776,6 +2782,7 @@
                 if (submitBtnText) submitBtnText.textContent = "Підтвердити замовлення";
             }
         }
+             
         // 9. ВІДСТЕЖЕННЯ ЗАМОВЛЕННЯ (TRACK ORDER MODAL)
         function openTrackModal(prefillId = '') {
             const modal = document.getElementById('trackModal');
