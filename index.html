@@ -1644,8 +1644,28 @@
 
             lucide.createIcons();
         }
+// Допоміжна функція: збирає унікальний список пар [назваВаріанта, шляхДоФото]
+        function getProductGalleryItems(product) {
+            const items = [];
+            const seenSrc = new Set();
 
-        // 6. ДЕТАЛЬНЕ МОДАЛЬНЕ ВІКНО ТОВАРУ (QUICK VIEW + ВАРІАНТИ + КУПИТИ В 1 КЛІК)
+            if (product.variantImages && typeof product.variantImages === 'object') {
+                Object.entries(product.variantImages).forEach(([label, src]) => {
+                    if (src && !seenSrc.has(src)) {
+                        seenSrc.add(src);
+                        items.push({ label, src });
+                    }
+                });
+            }
+
+            if (product.image && !seenSrc.has(product.image)) {
+                seenSrc.add(product.image);
+                items.unshift({ label: (product.variants && product.variants[0]) || "Основне фото", src: product.image });
+            }
+
+            return items;
+        }
+        // 6. ДЕТАЛЬНЕ МОДАЛЬНЕ ВІКНО ТОВАРУ (QUICK VIEW + ВАРІАНТИ + МІНІАТЮРИ + КУПИТИ В 1 КЛІК)
         function openQuickView(id) {
             const product = products.find(p => p.id === id);
             if (!product) return;
@@ -1655,35 +1675,58 @@
             const variants = product.variants && product.variants.length > 0 ? product.variants : ["Стандарт"];
             selectedModalVariant = variants[0];
             const initialImg = (product.variantImages && product.variantImages[selectedModalVariant]) || product.image;
+            const galleryItems = getProductGalleryItems(product);
 
             const content = document.getElementById('quickViewContent');
             content.innerHTML = `
-                <!-- Ліва частина: Фото -->
-                <div class="md:col-span-5 relative bg-slate-900 min-h-[260px] md:min-h-full group">
-                    <img 
-                        id="quickViewMainImg"
-                        src="${initialImg}" 
-                        alt="${product.title}" 
-                        onclick="event.stopPropagation(); openLightbox(this.src)"
-                        onerror="this.src='https://placehold.co/600x600/111520/00f0ff?text=DailyBox'"
-                        class="w-full h-full object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-[1.02]"
-                    >
-                    <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-darkCard/60 via-transparent to-transparent"></div>
-                    <div class="absolute top-4 left-4 flex gap-2 z-10">
-                        <span class="px-3 py-1 rounded-lg text-xs font-extrabold bg-darkBg/85 text-neonCyan border border-neonCyan/30">
-                            ${product.badge}
-                        </span>
-                        ${disc > 0 ? `<span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-neonMagenta text-white">-${disc}%</span>` : ''}
+                <!-- Ліва частина: Фото та мініатюри ракурсів -->
+                <div class="md:col-span-5 relative bg-slate-900 min-h-[260px] md:min-h-full flex flex-col justify-between group">
+                    <div class="relative flex-1 min-h-[260px] overflow-hidden">
+                        <img 
+                            id="quickViewMainImg"
+                            src="${initialImg}" 
+                            alt="${product.title}" 
+                            onclick="event.stopPropagation(); openLightbox(this.src)"
+                            onerror="this.src='https://placehold.co/600x600/111520/00f0ff?text=DailyBox'"
+                            class="w-full h-full object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-[1.02]"
+                        >
+                        <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-darkCard/60 via-transparent to-transparent"></div>
+                        <div class="absolute top-4 left-4 flex gap-2 z-10">
+                            <span class="px-3 py-1 rounded-lg text-xs font-extrabold bg-darkBg/85 text-neonCyan border border-neonCyan/30">
+                                ${product.badge}
+                            </span>
+                            ${disc > 0 ? `<span class="px-2.5 py-1 rounded-lg text-xs font-extrabold bg-neonMagenta text-white">-${disc}%</span>` : ''}
+                        </div>
+                        <button 
+                            type="button"
+                            onclick="event.stopPropagation(); const qImg = document.getElementById('quickViewMainImg'); openLightbox(qImg ? qImg.src : '${initialImg}');" 
+                            class="absolute bottom-3 right-3 px-3 py-1.5 rounded-xl bg-darkBg/85 hover:bg-white/20 text-white border border-white/15 text-xs font-bold flex items-center gap-1.5 backdrop-blur-md transition-all cursor-zoom-in z-10"
+                            title="Відкрити фото на весь екран"
+                        >
+                            <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
+                            <span>Збільшити</span>
+                        </button>
                     </div>
-                    <button 
-                        type="button"
-                        onclick="event.stopPropagation(); const qImg = document.getElementById('quickViewMainImg'); openLightbox(qImg ? qImg.src : '${initialImg}');" 
-                        class="absolute bottom-4 right-4 px-3 py-1.5 rounded-xl bg-darkBg/85 hover:bg-white/20 text-white border border-white/15 text-xs font-bold flex items-center gap-1.5 backdrop-blur-md transition-all cursor-zoom-in z-10"
-                        title="Відкрити фото на весь екран"
-                    >
-                        <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i>
-                        <span>Збільшити</span>
-                    </button>
+
+                    ${galleryItems.length > 1 ? `
+                        <div class="p-3 bg-darkBg/90 border-t border-white/10 flex items-center gap-2 overflow-x-auto" id="quickViewThumbs">
+                            ${galleryItems.map((item, idx) => {
+                                const isActive = item.src === initialImg || idx === 0;
+                                return `
+                                    <button
+                                        type="button"
+                                        data-thumb-src="${item.src}"
+                                        data-thumb-variant="${decodeURIComponent(encodeURIComponent(item.label))}"
+                                        onclick="event.stopPropagation(); selectQuickViewThumb(decodeURIComponent(this.dataset.thumbVariant), this.dataset.thumbSrc, this)"
+                                        title="${item.label}"
+                                        class="qv-thumb relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${isActive ? 'border-neonCyan ring-2 ring-neonCyan/30' : 'border-white/15 opacity-75 hover:opacity-100 hover:border-white/40'}"
+                                    >
+                                        <img src="${item.src}" alt="${item.label}" class="w-full h-full object-cover">
+                                    </button>
+                                `;
+                            }).join('')}
+                        </div>
+                    ` : ''}
                 </div>
 
                 <!-- Права частина: Деталі, Варіанти, Відгуки -->
@@ -1720,7 +1763,8 @@
                                 ${variants.map((v, idx) => `
                                     <button 
                                         type="button" 
-                                        onclick="selectVariant(decodeURIComponent('${encodeURIComponent(v)}'), this)" 
+                                        data-variant-value="${decodeURIComponent(encodeURIComponent(v))}"
+                                        onclick="selectVariant(decodeURIComponent(this.dataset.variantValue), this)" 
                                         class="variant-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition-all ${idx === 0 ? 'bg-neonCyan/15 border-neonCyan text-neonCyan' : 'bg-darkBg border-darkBorder text-slate-300 hover:border-white/30'}"
                                     >
                                         ${v}
@@ -1780,6 +1824,45 @@
             lucide.createIcons();
         }
 
+        function highlightQuickViewThumb(activeSrc, clickedThumbEl = null) {
+            document.querySelectorAll('.qv-thumb').forEach((thumb, idx) => {
+                const isMatch = clickedThumbEl ? thumb === clickedThumbEl : (thumb.dataset.thumbSrc === activeSrc || (!activeSrc && idx === 0));
+                thumb.className = `qv-thumb relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
+                    isMatch
+                        ? 'border-neonCyan ring-2 ring-neonCyan/30 opacity-100'
+                        : 'border-white/15 opacity-75 hover:opacity-100 hover:border-white/40'
+                }`;
+            });
+        }
+
+        function selectQuickViewThumb(variantLabel, imgSrc, thumbEl) {
+            const mainImg = document.getElementById('quickViewMainImg');
+            if (mainImg && imgSrc) {
+                mainImg.src = imgSrc;
+            }
+            highlightQuickViewThumb(imgSrc, thumbEl);
+
+            // Якщо цей ракурс відповідає наявному варіанту товару — підсвічуємо і його кнопку
+            if (currentQuickViewProduct && Array.isArray(currentQuickViewProduct.variants)) {
+                const matchedVariant = currentQuickViewProduct.variants.find(v => v === variantLabel);
+                if (matchedVariant) {
+                    selectedModalVariant = matchedVariant;
+                    const labelEl = document.getElementById('selectedVariantText');
+                    if (labelEl) labelEl.textContent = matchedVariant;
+
+                    const matchingBtn = Array.from(document.querySelectorAll('.variant-btn'))
+                        .find(b => b.dataset.variantValue === matchedVariant);
+
+                    document.querySelectorAll('.variant-btn').forEach(b => {
+                        b.className = "variant-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition-all bg-darkBg border-darkBorder text-slate-300 hover:border-white/30";
+                    });
+                    if (matchingBtn) {
+                        matchingBtn.className = "variant-btn px-3.5 py-2 rounded-xl text-xs font-bold border transition-all bg-neonCyan/15 border-neonCyan text-neonCyan";
+                    }
+                }
+            }
+        }
+
         function selectVariant(variantName, btnEl) {
             selectedModalVariant = variantName;
             const labelEl = document.getElementById('selectedVariantText');
@@ -1795,7 +1878,10 @@
             const mainImg = document.getElementById('quickViewMainImg');
             if (mainImg && currentQuickViewProduct) {
                 const nextImg = (currentQuickViewProduct.variantImages && currentQuickViewProduct.variantImages[variantName]) || currentQuickViewProduct.image;
-                if (nextImg) mainImg.src = nextImg;
+                if (nextImg) {
+                    mainImg.src = nextImg;
+                    highlightQuickViewThumb(nextImg);
+                }
             }
         }
 
