@@ -2946,13 +2946,13 @@ document.getElementById("receiptBox").innerHTML = `
                 </div>
             `;
         }
-        // 10. МІНІ-АДМІНКА ДРОПШИПЕРА (ДОДАВАННЯ ВЛАСНОГО ТОВАРУ + МАРЖА)
+   // 10. МІНІ-АДМІНКА ДРОПШИПЕРА (ДОДАВАННЯ ВЛАСНОГО ТОВАРУ + МАРЖА)
+        function openAdminModal() {
             const modal = document.getElementById('adminModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            lucide.createIcons();
-        function openAdminModal() {
             calculateAdminMargin();
+            lucide.createIcons();
         }
 
         function closeAdminModal() {
