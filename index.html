@@ -595,8 +595,8 @@
                 </div>
             </div>
 
-            <!-- Крок 2: Форма оформлення замовлення (Нова Пошта) -->
-            <form id="cartStepCheckout" onsubmit="submitOrder(event)" class="hidden space-y-4 bg-darkBg/80 p-4 sm:p-5 rounded-2xl border border-white/10">
+        <!-- Крок 2: Форма оформлення замовлення (Нова Пошта) -->
+            <form id="cartStepCheckout" onsubmit="submitOrder(event)" novalidate class="hidden space-y-4 bg-darkBg/80 p-4 sm:p-5 rounded-2xl border border-white/10">
                 <div class="flex items-center justify-between border-b border-white/10 pb-3">
                     <h4 class="font-bold text-sm text-neonCyan flex items-center gap-2">
                         <i data-lucide="truck" class="w-4 h-4"></i> Доставка Новою Поштою
@@ -607,29 +607,90 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">ПІБ отримувача *</label>
-                    <input type="text" id="custName" required placeholder="Шевченко Тарас Григорович" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                    <div class="flex items-center justify-between mb-1">
+                        <label for="custName" class="block text-xs font-medium text-slate-300">ПІБ отримувача *</label>
+                        <button type="button" id="clearSavedCustomerBtn" onclick="clearSavedCustomerProfile()" class="hidden text-[11px] text-slate-400 hover:text-neonMagenta transition-colors">
+                            Очистити дані
+                        </button>
+                    </div>
+                    <input
+                        type="text"
+                        id="custName"
+                        name="name"
+                        autocomplete="name"
+                        placeholder="Прізвище та ім'я (напр. Олександр Коваль)"
+                        class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-colors"
+                    >
+                    <p id="errCustName" class="hidden text-[11px] text-neonMagenta mt-1"></p>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Номер телефону *</label>
-                    <input type="tel" id="custPhone" required placeholder="+380 (__) ___-__-__" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                    <label for="custPhone" class="block text-xs font-medium text-slate-300 mb-1">Номер телефону *</label>
+                    <input
+                        type="tel"
+                        id="custPhone"
+                        name="tel"
+                        inputmode="tel"
+                        autocomplete="tel"
+                        placeholder="+380 (__) ___-__-__"
+                        maxlength="19"
+                        oninput="formatUaPhoneInput(this)"
+                        class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-colors font-mono"
+                    >
+                    <p id="errCustPhone" class="hidden text-[11px] text-neonMagenta mt-1"></p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Місто / Населений пункт *</label>
-                        <input type="text" id="custCity" required placeholder="Київ" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                        <label for="custCity" class="block text-xs font-medium text-slate-300 mb-1">Місто / Населений пункт *</label>
+                        <input
+                            type="text"
+                            id="custCity"
+                            name="address-level2"
+                            list="uaPopularCities"
+                            autocomplete="address-level2"
+                            placeholder="Напр. Київ або Ужгород"
+                            class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-colors"
+                        >
+                        <datalist id="uaPopularCities">
+                            <option value="Київ">
+                            <option value="Львів">
+                            <option value="Ужгород">
+                            <option value="Івано-Франківськ">
+                            <option value="Дніпро">
+                            <option value="Одеса">
+                            <option value="Харків">
+                            <option value="Вінниця">
+                            <option value="Тернопіль">
+                            <option value="Рівне">
+                        </datalist>
+                        <p id="errCustCity" class="hidden text-[11px] text-neonMagenta mt-1"></p>
                     </div>
+
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Відділення / Поштомат *</label>
-                        <input type="text" id="custBranch" required placeholder="Відділення №15" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                        <label for="custBranch" class="block text-xs font-medium text-slate-300 mb-1">Відділення / Поштомат *</label>
+                        <input
+                            type="text"
+                            id="custBranch"
+                            name="shipping-branch"
+                            placeholder="Відділення №15 або Поштомат"
+                            class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-colors"
+                        >
+                        <div class="flex flex-wrap gap-1.5 mt-1.5">
+                            <button type="button" onclick="applyBranchPrefix('Відділення №')" class="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-slate-300 border border-white/10 transition-colors">
+                                + Відділення №
+                            </button>
+                            <button type="button" onclick="applyBranchPrefix('Поштомат №')" class="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] text-slate-300 border border-white/10 transition-colors">
+                                + Поштомат №
+                            </button>
+                        </div>
+                        <p id="errCustBranch" class="hidden text-[11px] text-neonMagenta mt-1"></p>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Спосіб оплати *</label>
-                    <select id="custPayment" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none">
+                    <label for="custPayment" class="block text-xs font-medium text-slate-300 mb-1">Спосіб оплати *</label>
+                    <select id="custPayment" class="w-full bg-darkCard border border-darkBorder focus:border-neonCyan rounded-xl px-3.5 py-2.5 text-sm text-white outline-none transition-colors">
                         <option value="Накладений платіж при отриманні">Накладений платіж при отриманні (0 грн передплати)</option>
                         <option value="Оплата на рахунок ФОП / картку">Оплата на рахунок ФОП / картку</option>
                     </select>
@@ -640,11 +701,10 @@
                     <span id="checkoutFinalSum" class="font-black text-lg text-neonCyan">0 ₴</span>
                 </div>
 
-                <button type="submit" class="w-full py-3.5 rounded-xl font-extrabold text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-95 transition-all shadow-neon-mix">
-                    Підтвердити замовлення
+                <button id="submitOrderBtn" type="submit" class="w-full py-3.5 rounded-xl font-extrabold text-darkBg bg-gradient-to-r from-neonCyan to-neonMagenta hover:opacity-95 transition-all shadow-neon-mix disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <span id="submitOrderBtnText">Підтвердити замовлення</span>
                 </button>
             </form>
-
             <!-- Крок 3: Чек успішного замовлення -->
             <div id="cartStepSuccess" class="hidden text-center py-6 px-4 space-y-4 bg-darkBg/90 rounded-2xl border border-neonCyan/40">
                 <div class="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 mx-auto">
