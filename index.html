@@ -236,7 +236,8 @@
 
     <!-- ОСНОВНИЙ КОНТЕНТ -->
     <main class="relative z-10">
-
+        
+<div id="page-catalog" class="app-page">
         <!-- 2. HERO-СЕКЦІЯ ТА ТАЙМЕР АКЦІЇ ДНЯ -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-10 pb-10">
             <div class="relative rounded-3xl overflow-hidden bg-gradient-to-br from-darkCard via-[#13192b] to-darkCard border border-white/10 p-6 sm:p-10 lg:p-14 shadow-2xl">
@@ -514,6 +515,131 @@
 
             </div>
         </section>
+    </div><!-- /#page-catalog -->
+
+    <!-- СТОРІНКА 2: ДОСТАВКА ТА ОПЛАТА -->
+    <section id="page-delivery" class="app-page hidden max-w-5xl mx-auto px-4 py-8 sm:py-12 space-y-6">
+        <div class="space-y-2">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-neonCyan bg-neonCyan/10 border border-neonCyan/30 px-3 py-1 rounded-full">
+                Умови сервісу DailyBox
+            </span>
+            <h1 class="text-2xl sm:text-4xl font-black text-white">Доставка та оплата</h1>
+            <p class="text-sm text-slate-400">Швидке відправлення по всій Україні та прозорі умови отримання посилки.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-darkCard border border-darkBorder rounded-3xl p-6 space-y-3">
+                <div class="w-10 h-10 rounded-xl bg-neonCyan/15 border border-neonCyan/30 flex items-center justify-center text-neonCyan">
+                    <i data-lucide="truck" class="w-5 h-5"></i>
+                </div>
+                <h2 class="text-lg font-bold text-white">Нова Пошта по Україні</h2>
+                <ul class="space-y-2 text-sm text-slate-300">
+                    <li>• Доставка у відділення або поштомат Нової Пошти (1–3 дні).</li>
+                    <li>• Відправка здійснюється протягом 1–2 робочих днів після підтвердження замовлення менеджером.</li>
+                    <li>• Номер ТТН надсилається вам, а статус посилки завжди можна перевірити через кнопку <strong class="text-neonCyan">«Відстежити»</strong> у шапці сайту.</li>
+                </ul>
+            </div>
+
+            <div class="bg-darkCard border border-darkBorder rounded-3xl p-6 space-y-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                    <i data-lucide="wallet" class="w-5 h-5"></i>
+                </div>
+                <h2 class="text-lg font-bold text-white">Способи оплати</h2>
+                <ul class="space-y-2 text-sm text-slate-300">
+                    <li>• <strong class="text-white">Оплата при отриманні (післяплата):</strong> оглядаєте посилку у відділенні Нової Пошти й оплачуєте після перевірки.</li>
+                    <li>• <strong class="text-white">Переказ за реквізитами:</strong> оплата на картку/рахунок після підтвердження наявності (без комісії пошти за накладений платіж).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bg-darkCard border border-darkBorder rounded-3xl p-6 space-y-3">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="shield-check" class="w-5 h-5 text-purple-400"></i>
+                <h2 class="text-lg font-bold text-white">Перевірка на пошті та обмін / повернення (14 днів)</h2>
+            </div>
+            <p class="text-sm text-slate-300 leading-relaxed">
+                Будь ласка, перевіряйте цілісність та комплектацію товару безпосередньо у відділенні Нової Пошти при отриманні.
+                Якщо товар не підійшов за розміром, кольором чи характеристиками, ви можете обміняти або повернути його протягом <strong class="text-white">14 днів</strong> за умови збереження товарного вигляду, плівок та заводської упаковки.
+            </p>
+        </div>
+
+        <div class="pt-2">
+            <button type="button" onclick="navigateToPage('catalog')"
+                class="px-5 py-3 rounded-2xl bg-neonCyan text-darkBg text-xs sm:text-sm font-black hover:opacity-90 transition-opacity">
+                ← Повернутися до каталогу товарів
+            </button>
+        </div>
+    </section>
+
+    <!-- СТОРІНКА 3: КОНТАКТИ ТА FAQ -->
+    <section id="page-contacts" class="app-page hidden max-w-5xl mx-auto px-4 py-8 sm:py-12 space-y-6">
+        <div class="space-y-2">
+            <span class="inline-block text-xs font-bold uppercase tracking-wider text-purple-300 bg-purple-500/15 border border-purple-500/30 px-3 py-1 rounded-full">
+                Підтримка клієнтів
+            </span>
+            <h1 class="text-2xl sm:text-4xl font-black text-white">Контакти та часті запитання</h1>
+            <p class="text-sm text-slate-400">Маєте запитання щодо товару або хочете уточнити деталі замовлення? Напишіть нам напряму.</p>
+        </div>
+
+        <div class="bg-darkCard border border-darkBorder rounded-3xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <h2 class="text-lg font-bold text-white">Зв'язок із менеджером DailyBox</h2>
+                <p class="text-sm text-slate-300">Графік обробки замовлень та відповідей: <strong class="text-white">Щодня з 09:00 до 20:00</strong></p>
+                <p class="text-xs text-slate-400">Замовлення через кошик на сайті приймаються цілодобово (24/7).</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 shrink-0">
+                <a href="https://t.me/ТВІЙ_ТЕЛЕГРАМ" target="_blank" rel="noopener noreferrer"
+                    class="px-4 py-2.5 rounded-xl bg-neonCyan text-darkBg text-xs font-black hover:opacity-90 transition-opacity">
+                    Написати в Telegram
+                </a>
+                <a href="https://instagram.com/ТВІЙ_ІНСТАГРАМ" target="_blank" rel="noopener noreferrer"
+                    class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-bold border border-white/10 transition-colors">
+                    Наш Instagram
+                </a>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <h2 class="text-lg font-bold text-white">Часті запитання (FAQ)</h2>
+
+            <details class="bg-darkCard border border-darkBorder rounded-2xl p-4 group">
+                <summary class="cursor-pointer font-bold text-sm text-white flex items-center justify-between">
+                    <span>Як швидко відправляється замовлення після оформлення?</span>
+                    <span class="text-neonCyan text-xs">▼</span>
+                </summary>
+                <p class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+                    Після оформлення замовлення на сайті менеджер перевіряє наявність і підтверджує відправку. Зазвичай посилка передається на Нову Пошту протягом 1–2 робочих днів.
+                </p>
+            </details>
+
+            <details class="bg-darkCard border border-darkBorder rounded-2xl p-4 group">
+                <summary class="cursor-pointer font-bold text-sm text-white flex items-center justify-between">
+                    <span>Як дізнатися номер ТТН моєї посилки?</span>
+                    <span class="text-neonCyan text-xs">▼</span>
+                </summary>
+                <p class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+                    Одразу після оформлення ви отримуєте номер замовлення формату <span class="font-mono text-neonCyan">#DB-XXXX</span>. Натисніть кнопку «Відстежити» у верхньому меню сайту, щоб переглянути статус і скопіювати ТТН для перевірки на сайті Нової Пошти.
+                </p>
+            </details>
+
+            <details class="bg-darkCard border border-darkBorder rounded-2xl p-4 group">
+                <summary class="cursor-pointer font-bold text-sm text-white flex items-center justify-between">
+                    <span>Чи можна оплатити замовлення при отриманні на пошті?</span>
+                    <span class="text-neonCyan text-xs">▼</span>
+                </summary>
+                <p class="text-xs sm:text-sm text-slate-300 mt-3 leading-relaxed">
+                    Так, ви можете обрати оплату при отриманні у відділенні Нової Пошти, оглянути товар перед оплатою або сплатити за реквізитами після підтвердження менеджером.
+                </p>
+            </details>
+        </div>
+
+        <div class="pt-2">
+            <button type="button" onclick="navigateToPage('catalog')"
+                class="px-5 py-3 rounded-2xl bg-neonCyan text-darkBg text-xs sm:text-sm font-black hover:opacity-90 transition-opacity">
+                ← Повернутися до каталогу товарів
+            </button>
+        </div>
+    </section>
 
     </main>
 
@@ -3297,6 +3423,40 @@ function closeLightbox() {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeLightbox();
 }); 
+      // 11. НАВІГАЦІЯ МІЖ СТОРІНКАМИ (КАТАЛОГ / ДОСТАВКА / КОНТАКТИ)
+        function navigateToPage(pageName) {
+            const allowedPages = ['catalog', 'delivery', 'contacts'];
+            const target = allowedPages.includes(pageName) ? pageName : 'catalog';
+
+            document.querySelectorAll('.app-page').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            const activeSection = document.getElementById(`page-${target}`);
+            if (activeSection) activeSection.classList.remove('hidden');
+
+            document.querySelectorAll('[data-page-btn]').forEach(btn => {
+                const isActive = btn.getAttribute('data-page-btn') === target;
+                btn.classList.toggle('bg-neonCyan', isActive);
+                btn.classList.toggle('text-darkBg', isActive);
+                btn.classList.toggle('text-slate-300', !isActive);
+                if (btn.classList.contains('shrink-0')) {
+                    btn.classList.toggle('bg-white/5', !isActive);
+                }
+            });
+
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            try {
+                history.replaceState(null, '', target === 'catalog' ? window.location.pathname : `#${target}`);
+            } catch (_) {}
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '').trim();
+            if (hash && hash !== 'catalog') navigateToPage(hash);
+        });  
     </script>
     <!-- Модальне вікно для збільшення фото (Lightbox) -->
 <div id="imageLightbox" onclick="closeLightbox()" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm items-center justify-center p-4 cursor-zoom-out">
